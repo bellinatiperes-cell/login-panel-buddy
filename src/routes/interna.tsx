@@ -70,12 +70,12 @@ function InternaPage() {
       setProgresso((p) => {
         if (finalizadoRef.current) return 100;
         if (p >= 95) return 95;
-        const inc = p < 60 ? 1.0 : p < 85 ? 0.5 : 0.2;
+        const inc = p < 60 ? 0.35 : p < 85 ? 0.18 : 0.08;
         const next = Math.min(95, p + inc);
         setEtapa(Math.min(ETAPAS.length - 1, Math.floor((next / 100) * ETAPAS.length)));
         return next;
       });
-    }, 260);
+    }, 1200);
     return () => clearInterval(t);
   }, []);
 
