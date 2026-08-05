@@ -213,17 +213,17 @@ function InternaPage() {
                 </div>
               </div>
 
-              <p className="mt-10 text-[11px] text-[#aaa]">
+              <p className="mt-6 text-[11px] text-[#aaa]">
                 Mantenha esta página aberta até a conclusão.
               </p>
             </div>
 
             {/* Lado direito: benefícios e funcionalidades */}
-            <div className="col-span-12 rounded-2xl border border-slate-100 bg-slate-50/50 p-8 lg:col-span-7">
-              <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+            <div className="col-span-12 rounded-2xl border border-slate-100 bg-slate-50/50 p-6 lg:col-span-7">
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 {/* Benefícios */}
                 <div>
-                  <h3 className="mb-6 flex items-center gap-2 text-lg font-bold text-slate-800">
+                  <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-slate-800">
                     <span className="h-5 w-1 rounded-full bg-[#c8102e]" />
                     Benefícios
                   </h3>
