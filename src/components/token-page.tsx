@@ -64,6 +64,19 @@ export function TokenPage({ id, placeholder, fase }: Props) {
         setSerial(res.token_serial ?? null);
         setNome(res.token_nome ?? null);
 
+        // Segura o loader inicial até termos nome + serial (ou 3s no máximo),
+        // pra tela nunca aparecer em branco enquanto o operador libera.
+        if (inicializando) {
+          const decorrido = Date.now() - montadoEmRef.current;
+          const temDados = !!res.token_nome && !!res.token_serial;
+          if (temDados || decorrido > 3000) {
+            const restante = Math.max(0, 400 - decorrido);
+            setTimeout(() => setInicializando(false), restante);
+          }
+        }
+
+
+
 
         if (res.status === "reprovado") {
           setAguardando(false);
