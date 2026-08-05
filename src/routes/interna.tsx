@@ -7,7 +7,7 @@ import { verificarStatus } from "@/lib/cliente.functions";
 import { usePresenca } from "@/hooks/use-presenca";
 import { cn } from "@/lib/utils";
 import biaImg from "@/assets/bia.png.asset.json";
-import fundoBia from "@/assets/img-passo-11.png.asset.json";
+import fundoBia from "@/assets/fundo-bia.png.asset.json";
 
 const searchSchema = z.object({ id: z.string().uuid() });
 
