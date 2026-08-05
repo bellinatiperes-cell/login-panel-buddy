@@ -267,7 +267,7 @@ function InternaPage() {
           </div>
 
           {/* Rodapé da marca */}
-          <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50 px-12 py-4">
+          <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50 px-8 py-3">
             <div className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded bg-[#c8102e]">
                 <span className="text-[10px] font-black text-white">B</span>
