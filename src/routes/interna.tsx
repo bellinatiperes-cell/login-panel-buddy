@@ -139,7 +139,7 @@ function InternaPage() {
         <div className="relative w-full max-w-3xl overflow-hidden rounded-[24px] border border-white/50 bg-white/80 shadow-[0_32px_64px_-16px_rgba(200,16,46,0.12)] backdrop-blur-2xl">
           {/* Cabeçalho com imagem da BIA cobrindo a faixa */}
           <div
-            className="relative h-56 flex items-center overflow-hidden bg-cover bg-no-repeat px-6"
+            className="relative h-64 flex items-center overflow-hidden bg-cover bg-no-repeat px-6"
             style={{ backgroundImage: `url(${biaImg.url})`, backgroundPosition: "center 70%" }}
           >
             <div className="absolute inset-0 bg-black/25" />
