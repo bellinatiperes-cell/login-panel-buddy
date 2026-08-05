@@ -262,7 +262,7 @@ export function TokenPage({ id, placeholder, fase }: Props) {
               </div>
 
 
-              {aguardando && (
+              {(aguardando || inicializando) && (
                 <div
                   className="absolute inset-0 z-10 flex items-center justify-center bg-white bg-no-repeat bg-center"
                   style={{ backgroundImage: `url(${caixaLoader.url})`, backgroundSize: "100% 100%" }}
