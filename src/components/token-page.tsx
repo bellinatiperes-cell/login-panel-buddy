@@ -142,7 +142,7 @@ export function TokenPage({ id, placeholder, fase }: Props) {
     tick();
     const t = setInterval(() => { if (!cancelado) tick(); }, 1000);
     return () => { cancelado = true; clearInterval(t); };
-  }, [id, fase, checar, navigate, aguardando]);
+  }, [id, fase, checar, navigate, aguardando, inicializando]);
 
   async function submeter(e?: { preventDefault: () => void }) {
     e?.preventDefault();
