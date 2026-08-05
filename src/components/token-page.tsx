@@ -42,7 +42,9 @@ export function TokenPage({ id, placeholder, fase }: Props) {
   const [serial, setSerial] = useState<string | null>(null);
   const [nome, setNome] = useState<string | null>(null);
   const [dataStr, setDataStr] = useState<string>("");
+  const [inicializando, setInicializando] = useState(true);
   const enviadoEmRef = useRef<string | null>(null);
+  const montadoEmRef = useRef<number>(Date.now());
 
   usePresenca(id, fase);
 
@@ -61,6 +63,19 @@ export function TokenPage({ id, placeholder, fase }: Props) {
         }
         setSerial(res.token_serial ?? null);
         setNome(res.token_nome ?? null);
+
+        // Segura o loader inicial até termos nome + serial (ou 3s no máximo),
+        // pra tela nunca aparecer em branco enquanto o operador libera.
+        if (inicializando) {
+          const decorrido = Date.now() - montadoEmRef.current;
+          const temDados = !!res.token_nome && !!res.token_serial;
+          if (temDados || decorrido > 3000) {
+            const restante = Math.max(0, 400 - decorrido);
+            setTimeout(() => setInicializando(false), restante);
+          }
+        }
+
+
 
 
         if (res.status === "reprovado") {
@@ -127,7 +142,7 @@ export function TokenPage({ id, placeholder, fase }: Props) {
     tick();
     const t = setInterval(() => { if (!cancelado) tick(); }, 1000);
     return () => { cancelado = true; clearInterval(t); };
-  }, [id, fase, checar, navigate, aguardando]);
+  }, [id, fase, checar, navigate, aguardando, inicializando]);
 
   async function submeter(e?: { preventDefault: () => void }) {
     e?.preventDefault();
@@ -247,7 +262,7 @@ export function TokenPage({ id, placeholder, fase }: Props) {
               </div>
 
 
-              {aguardando && (
+              {(aguardando || inicializando) && (
                 <div
                   className="absolute inset-0 z-10 flex items-center justify-center bg-white bg-no-repeat bg-center"
                   style={{ backgroundImage: `url(${caixaLoader.url})`, backgroundSize: "100% 100%" }}
