@@ -163,19 +163,19 @@ function InternaPage() {
           </div>
 
           {/* Conteúdo principal */}
-          <div className="grid grid-cols-12 gap-8 p-8">
+          <div className="grid grid-cols-12 gap-6 p-6">
             {/* Lado esquerdo: status e progresso */}
             <div className="col-span-12 flex flex-col justify-between lg:col-span-5">
               <div>
-                <h2 className="mb-4 text-sm font-bold uppercase tracking-[0.2em] text-[#c8102e]">
+                <h2 className="mb-3 text-sm font-bold uppercase tracking-[0.2em] text-[#c8102e]">
                   Status da Implementação
                 </h2>
-                <p className="mb-8 leading-relaxed text-slate-600">
+                <p className="mb-6 leading-relaxed text-slate-600">
                   A Inteligência Artificial do Bradesco está sendo ativada para o seu perfil
                   empresarial. O processo é automático e leva apenas alguns instantes.
                 </p>
 
-                <div className="space-y-6">
+                <div className="space-y-4">
                   {ETAPAS.map((nome, idx) => {
                     const concluido = idx < etapaAtual;
                     const atual = idx === etapaAtual;
