@@ -230,8 +230,8 @@ function InternaPage() {
                   <ul className="space-y-5">
                     {BENEFICIOS.map((b) => (
                       <li key={b.titulo} className="flex gap-3">
-                        <div className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-100">
-                          <Check className="h-3 w-3 text-green-600" />
+                        <div className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-bia-purple/15">
+                          <Check className="h-3 w-3 text-bia-purple" />
                         </div>
                         <div>
                           <span className="block text-sm font-bold text-slate-700">{b.titulo}</span>
