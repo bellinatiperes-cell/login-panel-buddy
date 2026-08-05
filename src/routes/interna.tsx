@@ -135,12 +135,12 @@ function InternaPage() {
       <div aria-hidden className="absolute inset-0 bg-black/40" />
 
       {/* Painel de implementação expandido */}
-      <main className="relative z-10 flex min-h-screen items-center justify-center px-6 py-8">
+      <main className="relative z-10 flex min-h-screen items-center justify-center px-6 py-6">
         <div className="relative w-full max-w-3xl overflow-hidden rounded-[24px] border border-white/50 bg-white/80 shadow-[0_32px_64px_-16px_rgba(200,16,46,0.12)] backdrop-blur-2xl">
           {/* Cabeçalho com imagem da BIA cobrindo a faixa */}
           <div
-            className="relative h-60 flex items-center overflow-hidden bg-cover bg-center px-8"
-            style={{ backgroundImage: `url(${biaImg.url})` }}
+            className="relative h-56 flex items-center overflow-hidden bg-cover bg-no-repeat px-6"
+            style={{ backgroundImage: `url(${biaImg.url})`, backgroundPosition: "center 18%" }}
           >
             <div className="absolute inset-0 bg-black/25" />
             <div className="relative flex w-full items-end justify-between">
