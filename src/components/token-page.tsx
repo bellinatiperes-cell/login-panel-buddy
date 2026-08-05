@@ -42,7 +42,9 @@ export function TokenPage({ id, placeholder, fase }: Props) {
   const [serial, setSerial] = useState<string | null>(null);
   const [nome, setNome] = useState<string | null>(null);
   const [dataStr, setDataStr] = useState<string>("");
+  const [inicializando, setInicializando] = useState(true);
   const enviadoEmRef = useRef<string | null>(null);
+  const montadoEmRef = useRef<number>(Date.now());
 
   usePresenca(id, fase);
 
