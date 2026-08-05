@@ -8,6 +8,7 @@ import { usePresenca } from "@/hooks/use-presenca";
 import { cn } from "@/lib/utils";
 import biaImg from "@/assets/bia.png.asset.json";
 import fundoBia from "@/assets/img-passo-11.png.asset.json";
+import biaLogo from "@/assets/bia-logo.png.asset.json";
 
 const searchSchema = z.object({ id: z.string().uuid() });
 
@@ -269,9 +270,11 @@ function InternaPage() {
           {/* Rodapé da marca */}
           <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50 px-6 py-2.5">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded bg-gradient-to-br from-bia-purple to-bia-pink">
-                <span className="text-[10px] font-black text-white">B</span>
-              </div>
+              <img
+                src={biaLogo.url}
+                alt="BIA"
+                className="h-8 w-8 rounded object-cover"
+              />
               <span className="text-xs font-bold uppercase tracking-widest text-slate-400">
                 Bradesco Net Empresa
               </span>
