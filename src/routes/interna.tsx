@@ -244,7 +244,7 @@ function InternaPage() {
 
                 {/* Funcionalidades */}
                 <div>
-                  <h3 className="mb-6 flex items-center gap-2 text-lg font-bold text-slate-800">
+                  <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-slate-800">
                     <span className="h-5 w-1 rounded-full bg-[#c8102e]" />
                     Funcionalidades
                   </h3>
