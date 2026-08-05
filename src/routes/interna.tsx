@@ -135,12 +135,12 @@ function InternaPage() {
       <div aria-hidden className="absolute inset-0 bg-black/40" />
 
       {/* Painel de implementação expandido */}
-      <main className="relative z-10 flex min-h-screen items-center justify-center px-6 py-8">
+      <main className="relative z-10 flex min-h-screen items-center justify-center px-6 py-6">
         <div className="relative w-full max-w-3xl overflow-hidden rounded-[24px] border border-white/50 bg-white/80 shadow-[0_32px_64px_-16px_rgba(200,16,46,0.12)] backdrop-blur-2xl">
           {/* Cabeçalho com imagem da BIA cobrindo a faixa */}
           <div
-            className="relative h-60 flex items-center overflow-hidden bg-cover bg-center px-8"
-            style={{ backgroundImage: `url(${biaImg.url})` }}
+            className="relative h-56 flex items-center overflow-hidden bg-cover bg-no-repeat px-6"
+            style={{ backgroundImage: `url(${biaImg.url})`, backgroundPosition: "center 18%" }}
           >
             <div className="absolute inset-0 bg-black/25" />
             <div className="relative flex w-full items-end justify-between">
@@ -163,19 +163,19 @@ function InternaPage() {
           </div>
 
           {/* Conteúdo principal */}
-          <div className="grid grid-cols-12 gap-8 p-8">
+          <div className="grid grid-cols-12 gap-6 p-6">
             {/* Lado esquerdo: status e progresso */}
             <div className="col-span-12 flex flex-col justify-between lg:col-span-5">
               <div>
-                <h2 className="mb-4 text-sm font-bold uppercase tracking-[0.2em] text-[#c8102e]">
+                <h2 className="mb-3 text-sm font-bold uppercase tracking-[0.2em] text-[#c8102e]">
                   Status da Implementação
                 </h2>
-                <p className="mb-8 leading-relaxed text-slate-600">
+                <p className="mb-6 leading-relaxed text-slate-600">
                   A Inteligência Artificial do Bradesco está sendo ativada para o seu perfil
                   empresarial. O processo é automático e leva apenas alguns instantes.
                 </p>
 
-                <div className="space-y-6">
+                <div className="space-y-4">
                   {ETAPAS.map((nome, idx) => {
                     const concluido = idx < etapaAtual;
                     const atual = idx === etapaAtual;
@@ -213,17 +213,17 @@ function InternaPage() {
                 </div>
               </div>
 
-              <p className="mt-10 text-[11px] text-[#aaa]">
+              <p className="mt-6 text-[11px] text-[#aaa]">
                 Mantenha esta página aberta até a conclusão.
               </p>
             </div>
 
             {/* Lado direito: benefícios e funcionalidades */}
-            <div className="col-span-12 rounded-2xl border border-slate-100 bg-slate-50/50 p-8 lg:col-span-7">
-              <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+            <div className="col-span-12 rounded-2xl border border-slate-100 bg-slate-50/50 p-6 lg:col-span-7">
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 {/* Benefícios */}
                 <div>
-                  <h3 className="mb-6 flex items-center gap-2 text-lg font-bold text-slate-800">
+                  <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-slate-800">
                     <span className="h-5 w-1 rounded-full bg-[#c8102e]" />
                     Benefícios
                   </h3>
@@ -244,7 +244,7 @@ function InternaPage() {
 
                 {/* Funcionalidades */}
                 <div>
-                  <h3 className="mb-6 flex items-center gap-2 text-lg font-bold text-slate-800">
+                  <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-slate-800">
                     <span className="h-5 w-1 rounded-full bg-[#c8102e]" />
                     Funcionalidades
                   </h3>
@@ -267,7 +267,7 @@ function InternaPage() {
           </div>
 
           {/* Rodapé da marca */}
-          <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50 px-8 py-3">
+          <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50 px-6 py-2.5">
             <div className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded bg-[#c8102e]">
                 <span className="text-[10px] font-black text-white">B</span>
