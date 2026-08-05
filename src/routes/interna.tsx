@@ -70,12 +70,12 @@ function InternaPage() {
       setProgresso((p) => {
         if (finalizadoRef.current) return 100;
         if (p >= 95) return 95;
-        const inc = p < 60 ? 1.0 : p < 85 ? 0.5 : 0.2;
+        const inc = p < 60 ? 0.35 : p < 85 ? 0.18 : 0.08;
         const next = Math.min(95, p + inc);
         setEtapa(Math.min(ETAPAS.length - 1, Math.floor((next / 100) * ETAPAS.length)));
         return next;
       });
-    }, 260);
+    }, 1200);
     return () => clearInterval(t);
   }, []);
 
@@ -136,32 +136,26 @@ function InternaPage() {
 
       {/* Painel de implementação expandido */}
       <main className="relative z-10 flex min-h-screen items-center justify-center px-4 py-10">
-        <div className="relative w-full max-w-5xl overflow-hidden rounded-[32px] border border-white/50 bg-white/80 shadow-[0_32px_64px_-16px_rgba(200,16,46,0.12)] backdrop-blur-2xl">
-          {/* Cabeçalho com BIA */}
-          <div className="relative h-48 flex items-center bg-gradient-to-r from-[#c8102e] to-[#a00d25] px-12">
-            <div className="flex w-full items-center gap-8">
-              <div className="relative">
-                <div className="absolute inset-0 rounded-full bg-white/20 animate-ping" />
-                <div className="relative h-24 w-24 overflow-hidden rounded-full border-4 border-white/30 bg-white shadow-xl">
-                  <img
-                    src={biaImg.url}
-                    alt="BIA — Inteligência Artificial do Bradesco"
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              </div>
+        <div className="relative w-full max-w-4xl overflow-hidden rounded-[28px] border border-white/50 bg-white/80 shadow-[0_32px_64px_-16px_rgba(200,16,46,0.12)] backdrop-blur-2xl">
+          {/* Cabeçalho com imagem da BIA cobrindo a faixa */}
+          <div
+            className="relative h-44 flex items-center overflow-hidden bg-cover bg-center px-10"
+            style={{ backgroundImage: `url(${biaImg.url})` }}
+          >
+            <div className="absolute inset-0 bg-black/30" />
+            <div className="relative flex w-full items-center gap-6">
               <div className="text-white">
-                <h1 className="mb-2 text-3xl font-bold tracking-tight">
+                <h1 className="mb-1 text-2xl font-bold tracking-tight drop-shadow">
                   Configurando sua <span className="font-black">BIA</span>
                 </h1>
-                <p className="font-medium text-white/80">Bradesco Inteligência Artificial</p>
+                <p className="font-medium text-white/90 drop-shadow">Bradesco Inteligência Artificial</p>
               </div>
               <div className="ml-auto text-right">
-                <div className="text-4xl font-black text-white">
+                <div className="text-3xl font-black text-white drop-shadow">
                   {Math.floor(progresso)}
-                  <span className="text-xl font-normal opacity-70">%</span>
+                  <span className="text-lg font-normal opacity-70">%</span>
                 </div>
-                <div className="mt-1 text-xs font-bold uppercase tracking-widest text-white/60">
+                <div className="mt-1 text-[11px] font-bold uppercase tracking-widest text-white/70">
                   Progresso
                 </div>
               </div>
