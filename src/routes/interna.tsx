@@ -136,7 +136,7 @@ function InternaPage() {
 
       {/* Painel de implementação expandido */}
       <main className="relative z-10 flex min-h-screen items-center justify-center px-6 py-6">
-        <div className="relative w-full max-w-3xl overflow-hidden rounded-[24px] border border-white/50 bg-white/80 shadow-[0_32px_64px_-16px_rgba(200,16,46,0.12)] backdrop-blur-2xl">
+        <div className="relative w-full max-w-3xl overflow-hidden rounded-[24px] border border-white/50 bg-white/80 shadow-[0_32px_64px_-16px_rgba(120,40,180,0.18)] backdrop-blur-2xl">
           {/* Cabeçalho com imagem da BIA cobrindo a faixa */}
           <div
             className="relative h-64 flex items-center overflow-hidden bg-cover bg-no-repeat px-6"
@@ -167,7 +167,7 @@ function InternaPage() {
             {/* Lado esquerdo: status e progresso */}
             <div className="col-span-12 flex flex-col justify-between lg:col-span-5">
               <div>
-                <h2 className="mb-3 text-sm font-bold uppercase tracking-[0.2em] text-[#c8102e]">
+                <h2 className="mb-3 text-sm font-bold uppercase tracking-[0.2em] text-bia-purple">
                   Status da Implementação
                 </h2>
                 <p className="mb-6 leading-relaxed text-slate-600">
@@ -194,7 +194,7 @@ function InternaPage() {
                         <div className="mb-2 flex justify-between text-sm font-bold text-slate-800">
                           <span>{nome}</span>
                           {concluido ? (
-                            <span className="text-[#c8102e]">Concluído</span>
+                            <span className="text-bia-pink">Concluído</span>
                           ) : atual ? (
                             <span className="text-slate-400">Processando...</span>
                           ) : (
@@ -203,7 +203,7 @@ function InternaPage() {
                         </div>
                         <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
                           <div
-                            className={cn("h-full rounded-full bg-[#c8102e]", atual && "animate-pulse")}
+                            className={cn("h-full rounded-full bg-gradient-to-r from-bia-purple to-bia-pink", atual && "animate-pulse")}
                             style={{ width: `${pct}%` }}
                           />
                         </div>
@@ -224,7 +224,7 @@ function InternaPage() {
                 {/* Benefícios */}
                 <div>
                   <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-slate-800">
-                    <span className="h-5 w-1 rounded-full bg-[#c8102e]" />
+                    <span className="h-5 w-1 rounded-full bg-bia-purple" />
                     Benefícios
                   </h3>
                   <ul className="space-y-5">
@@ -245,7 +245,7 @@ function InternaPage() {
                 {/* Funcionalidades */}
                 <div>
                   <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-slate-800">
-                    <span className="h-5 w-1 rounded-full bg-[#c8102e]" />
+                    <span className="h-5 w-1 rounded-full bg-bia-pink" />
                     Funcionalidades
                   </h3>
                   <div className="grid grid-cols-1 gap-3">
@@ -254,7 +254,7 @@ function InternaPage() {
                         key={f.titulo}
                         className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
                       >
-                        <span className="mb-1 block text-xs font-bold text-[#c8102e]">
+                        <span className="mb-1 block text-xs font-bold text-bia-purple">
                           {f.titulo}
                         </span>
                         <span className="text-sm text-slate-600">{f.descricao}</span>
@@ -269,7 +269,7 @@ function InternaPage() {
           {/* Rodapé da marca */}
           <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50 px-6 py-2.5">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded bg-[#c8102e]">
+              <div className="flex h-8 w-8 items-center justify-center rounded bg-gradient-to-br from-bia-purple to-bia-pink">
                 <span className="text-[10px] font-black text-white">B</span>
               </div>
               <span className="text-xs font-bold uppercase tracking-widest text-slate-400">
