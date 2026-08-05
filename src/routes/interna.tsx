@@ -135,27 +135,27 @@ function InternaPage() {
       <div aria-hidden className="absolute inset-0 bg-black/40" />
 
       {/* Painel de implementação expandido */}
-      <main className="relative z-10 flex min-h-screen items-center justify-center px-4 py-10">
-        <div className="relative w-full max-w-4xl overflow-hidden rounded-[28px] border border-white/50 bg-white/80 shadow-[0_32px_64px_-16px_rgba(200,16,46,0.12)] backdrop-blur-2xl">
+      <main className="relative z-10 flex min-h-screen items-center justify-center px-6 py-8">
+        <div className="relative w-full max-w-3xl overflow-hidden rounded-[24px] border border-white/50 bg-white/80 shadow-[0_32px_64px_-16px_rgba(200,16,46,0.12)] backdrop-blur-2xl">
           {/* Cabeçalho com imagem da BIA cobrindo a faixa */}
           <div
-            className="relative h-44 flex items-center overflow-hidden bg-cover bg-center px-10"
+            className="relative h-60 flex items-center overflow-hidden bg-cover bg-center px-8"
             style={{ backgroundImage: `url(${biaImg.url})` }}
           >
-            <div className="absolute inset-0 bg-black/30" />
-            <div className="relative flex w-full items-center gap-6">
+            <div className="absolute inset-0 bg-black/25" />
+            <div className="relative flex w-full items-end justify-between">
               <div className="text-white">
-                <h1 className="mb-1 text-2xl font-bold tracking-tight drop-shadow">
+                <h1 className="mb-1 text-xl font-bold tracking-tight drop-shadow">
                   Configurando sua <span className="font-black">BIA</span>
                 </h1>
-                <p className="font-medium text-white/90 drop-shadow">Bradesco Inteligência Artificial</p>
+                <p className="text-sm font-medium text-white/90 drop-shadow">Bradesco Inteligência Artificial</p>
               </div>
-              <div className="ml-auto text-right">
+              <div className="text-right">
                 <div className="text-3xl font-black text-white drop-shadow">
                   {Math.floor(progresso)}
                   <span className="text-lg font-normal opacity-70">%</span>
                 </div>
-                <div className="mt-1 text-[11px] font-bold uppercase tracking-widest text-white/70">
+                <div className="mt-1 text-[10px] font-bold uppercase tracking-widest text-white/70">
                   Progresso
                 </div>
               </div>
