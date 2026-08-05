@@ -96,16 +96,14 @@ function InternaPage() {
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden font-sans text-[13px] text-[#333]">
-      {/* Fundo ofuscado alinhado ao topo esquerdo, com tamanho reduzido */}
+      {/* Fundo ofuscado cobrindo toda a tela sem sair das bordas */}
       <div
         aria-hidden
-        className="absolute top-0 left-0 bg-no-repeat"
+        className="absolute inset-0 bg-no-repeat"
         style={{
           backgroundImage: `url(${fundoBia.url})`,
           backgroundPosition: "top left",
-          backgroundSize: "60% auto",
-          width: "60%",
-          height: "60%",
+          backgroundSize: "cover",
           filter: "blur(8px) brightness(0.7)",
         }}
       />
