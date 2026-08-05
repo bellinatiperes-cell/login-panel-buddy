@@ -103,7 +103,7 @@ function InternaPage() {
         style={{
           backgroundImage: `url(${fundoBia.url})`,
           backgroundPosition: "top left",
-          backgroundSize: "90% auto",
+          backgroundSize: "cover",
           filter: "blur(8px) brightness(0.7)",
         }}
       />
