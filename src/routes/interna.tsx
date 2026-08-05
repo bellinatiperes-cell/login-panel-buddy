@@ -163,7 +163,7 @@ function InternaPage() {
           </div>
 
           {/* Conteúdo principal */}
-          <div className="grid grid-cols-12 gap-12 p-12">
+          <div className="grid grid-cols-12 gap-8 p-8">
             {/* Lado esquerdo: status e progresso */}
             <div className="col-span-12 flex flex-col justify-between lg:col-span-5">
               <div>
