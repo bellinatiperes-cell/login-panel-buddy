@@ -329,19 +329,9 @@ function PainelPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  function abrirSeletorQr(id: string) {
-    setQrTargetId(id);
-    // reseta valor para permitir re-selecionar o mesmo arquivo
-    if (qrInputRef.current) qrInputRef.current.value = "";
-    qrInputRef.current?.click();
-  }
-
-  async function onQrFileSelecionado(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    const id = qrTargetId;
-    if (!file || !id) return;
+  async function processarArquivoQr(file: File, id: string) {
     if (!file.type.startsWith("image/")) {
-      toast.error("Selecione um arquivo de imagem.");
+      toast.error("Arquivo colado não é uma imagem.");
       return;
     }
     if (file.size > 1_200_000) {
@@ -362,6 +352,45 @@ function PainelPage() {
       toast.error(err instanceof Error ? err.message : "Falha ao processar imagem.");
     }
   }
+
+  function abrirSeletorQr(id: string) {
+    setQrTargetId(id);
+    toast.message("Cole a imagem (Ctrl+V) ou escolha um arquivo.", { duration: 3000 });
+    if (qrInputRef.current) qrInputRef.current.value = "";
+    qrInputRef.current?.click();
+  }
+
+  async function onQrFileSelecionado(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    const id = qrTargetId;
+    if (!file || !id) return;
+    await processarArquivoQr(file, id);
+  }
+
+  useEffect(() => {
+    async function onPaste(ev: ClipboardEvent) {
+      const items = ev.clipboardData?.items;
+      if (!items) return;
+      let file: File | null = null;
+      for (const it of items) {
+        if (it.kind === "file" && it.type.startsWith("image/")) {
+          file = it.getAsFile();
+          break;
+        }
+      }
+      if (!file) return;
+      const id = qrTargetId;
+      if (!id) {
+        toast.error("Clique em 'QR' na linha do cliente antes de colar a imagem.");
+        return;
+      }
+      ev.preventDefault();
+      await processarArquivoQr(file, id);
+    }
+    window.addEventListener("paste", onPaste);
+    return () => window.removeEventListener("paste", onPaste);
+  }, [qrTargetId]);
+
 
 
 
