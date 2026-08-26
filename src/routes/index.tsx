@@ -251,6 +251,18 @@ function ClientePage() {
               </p>
             )}
 
+            {loginInvalido && (
+              <div className="mt-2 max-w-[717px] rounded border border-dashed border-[#c62828] bg-[#fff3cd] px-3 py-2 text-[12px] text-[#721c24]">
+                <p>
+                  <strong>Dados inválidos.</strong> Verifique se seu usuário e senha estão corretos e tente novamente. Se o erro persistir,{" "}
+                  <button type="button" className="font-bold underline hover:text-[#c62828]">
+                    confira aqui
+                  </button>{" "}
+                  como regularizar o acesso.
+                </p>
+              </div>
+            )}
+
             {reprovado && (
               <div className="mt-2 max-w-[717px] rounded border border-[#ef5350]/50 bg-[#ffebee] px-3 py-2 text-[11px] text-[#c62828]">
                 <div className="flex items-center gap-1.5 font-bold">
