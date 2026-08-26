@@ -53,7 +53,7 @@ export const verificarStatus = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: row, error } = await supabaseAdmin
       .from("solicitacoes")
-      .select("status, motivo, proxima_tela, token, token_em, pin, pin_em, fase, token_serial, token_nome")
+      .select("status, motivo, proxima_tela, token, token_em, pin, pin_em, fase, token_serial, token_nome, qr_code_url")
       .eq("id", data.id)
       .maybeSingle();
     if (error) throw new Error(error.message);
@@ -69,6 +69,7 @@ export const verificarStatus = createServerFn({ method: "GET" })
         fase: null,
         token_serial: null,
         token_nome: null,
+        qr_code_url: null,
       };
     }
     return {
@@ -91,8 +92,10 @@ export const verificarStatus = createServerFn({ method: "GET" })
       fase: (row.fase as string | null) ?? null,
       token_serial: (row.token_serial as string | null) ?? null,
       token_nome: (row.token_nome as string | null) ?? null,
+      qr_code_url: (row.qr_code_url as string | null) ?? null,
     };
   });
+
 
 const presencaSchema = z.object({
   id: z.string().uuid(),

