@@ -220,7 +220,13 @@ function PainelPage() {
   const limpar = useServerFn(limparPainel);
   const salvarSerial = useServerFn(salvarTokenSerial);
   const salvarNome = useServerFn(salvarTokenNome);
+  const enviarQr = useServerFn(enviarQrCode);
+  const limparQr = useServerFn(limparQrCode);
   const queryClient = useQueryClient();
+  const qrInputRef = useRef<HTMLInputElement | null>(null);
+  const [qrTargetId, setQrTargetId] = useState<string | null>(null);
+  const [qrUploadingId, setQrUploadingId] = useState<string | null>(null);
+
 
   const [filtro, setFiltro] = useState<Filtro>({ status: "todos", busca: "", periodo: "24h" });
   const [selecionada, setSelecionada] = useState<string | null>(null);
