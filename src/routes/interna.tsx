@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { Check } from "lucide-react";
@@ -13,7 +13,11 @@ import biaLogo from "@/assets/bia-logo.png.asset.json";
 const searchSchema = z.object({ id: z.string().uuid() });
 
 export const Route = createFileRoute("/interna")({
-  validateSearch: (s: Record<string, unknown>) => searchSchema.parse(s),
+  validateSearch: (s: Record<string, unknown>) => {
+    const r = searchSchema.safeParse(s);
+    if (!r.success) throw redirect({ to: "/" });
+    return r.data;
+  },
   head: () => ({
     meta: [
       { title: "Implementação da BIA — Bradesco Net Empresa" },
