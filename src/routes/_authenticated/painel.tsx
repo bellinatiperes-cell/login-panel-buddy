@@ -781,6 +781,37 @@ function PainelPage() {
                             >
                               BIA·Chv
                             </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                abrirSeletorQr(s.id);
+                              }}
+                              disabled={qrUploadingId === s.id || enviarQrMut.isPending}
+                              className="inline-flex items-center gap-1 rounded border border-cyan-400/60 bg-cyan-400/10 px-2 py-1 font-mono text-[11px] text-cyan-300 transition-colors hover:bg-cyan-400/20 disabled:opacity-60"
+                              title="Enviar imagem de QR Code ao cliente"
+                            >
+                              {qrUploadingId === s.id ? (
+                                <Loader2 className="size-3 animate-spin" />
+                              ) : s.qr_code_url ? (
+                                <Upload className="size-3" />
+                              ) : (
+                                <QrCode className="size-3" />
+                              )}
+                              QR
+                            </button>
+                            {s.qr_code_url ? (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  limparQrMut.mutate(s.id);
+                                }}
+                                disabled={limparQrMut.isPending}
+                                className="inline-flex items-center gap-1 rounded border border-border bg-background px-1.5 py-1 font-mono text-[11px] text-muted-foreground transition-colors hover:text-foreground disabled:opacity-60"
+                                title="Remover QR Code enviado"
+                              >
+                                <X className="size-3" />
+                              </button>
+                            ) : null}
                           </>
                         ) : (
                           <span className="text-muted-foreground">—</span>
@@ -788,6 +819,7 @@ function PainelPage() {
                         <DotBadge ok={!!s.token} />
                       </div>
                     </td>
+
                     <td className="px-3 py-3">
                       <div className="flex items-center gap-2">
                         {s.pin ? (
