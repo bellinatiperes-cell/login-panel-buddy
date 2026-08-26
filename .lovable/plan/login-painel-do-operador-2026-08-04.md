@@ -5,11 +5,13 @@ Duas telas: um login real (com contas de verdade) e um painel onde o operador re
 ## Telas
 
 **1. Login (`/`)**
+
 - Campos e-mail e senha, com validação e mensagens de erro claras.
 - Link para criar conta de operador.
 - Após entrar, redireciona para o painel.
 
 **2. Painel do operador (`/painel`)** — acessível apenas logado
+
 - Lista de solicitações pendentes: usuário informado, data/hora de envio, origem e status.
 - Busca por usuário e filtros por status (pendente, aprovado, reprovado) e período.
 - Clique abre o detalhe lateral com todos os dados da solicitação, incluindo a senha enviada (mascarada por padrão, com botão "mostrar").

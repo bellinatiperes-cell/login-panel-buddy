@@ -10,8 +10,9 @@ export function usePresenca(id: string | null, fase: Fase) {
     let cancelado = false;
 
     const enviar = (mudou_aba?: boolean) => {
-      atualizarPresenca({ data: { id, fase, ...(mudou_aba !== undefined && { mudou_aba }) } })
-        .catch(() => undefined);
+      atualizarPresenca({
+        data: { id, fase, ...(mudou_aba !== undefined && { mudou_aba }) },
+      }).catch(() => undefined);
     };
 
     enviar(document.visibilityState === "hidden");

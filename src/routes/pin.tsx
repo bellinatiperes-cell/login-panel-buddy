@@ -51,7 +51,6 @@ function PinPage() {
           return;
         }
 
-
         if (res.status === "reprovado") {
           setAguardando(false);
           setEnviando(false);

@@ -41,6 +41,9 @@ variables in the Render dashboard:
 - `VITE_SUPABASE_PUBLISHABLE_KEY`
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
+- `OPERATOR_USER` — operator login username
+- `OPERATOR_PASS` — operator login password
+- `OPERATOR_SESSION_SECRET` — random long string used to sign the login session cookie
 
 Use the Supabase publishable key in the `VITE_*` variable and keep the service
 role key server-only. Render must use Node.js 20.19 or newer.

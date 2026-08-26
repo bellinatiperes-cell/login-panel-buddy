@@ -15,3 +15,9 @@ services:
         sync: false
       - key: SUPABASE_SERVICE_ROLE_KEY
         sync: false
+      - key: OPERATOR_USER
+        sync: false
+      - key: OPERATOR_PASS
+        sync: false
+      - key: OPERATOR_SESSION_SECRET
+        sync: false

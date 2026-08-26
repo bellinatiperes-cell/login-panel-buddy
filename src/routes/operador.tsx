@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
+import { login } from "@/lib/auth.functions";
 import { ShieldCheck, Loader2, ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/operador")({
@@ -38,6 +40,8 @@ const schema = z.object({
 
 function OperadorLoginPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const entrar = useServerFn(login);
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState<string | null>(null);
@@ -55,15 +59,11 @@ function OperadorLoginPage() {
 
     setCarregando(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: `${parsed.data.usuario.toLowerCase()}@app.local`,
-        password: parsed.data.senha,
-      });
-      if (error) {
-        setErro("Usuário ou senha incorretos.");
-        return;
-      }
+      await entrar({ data: parsed.data });
+      await queryClient.invalidateQueries();
       navigate({ to: "/painel" });
+    } catch {
+      setErro("Usuário ou senha incorretos.");
     } finally {
       setCarregando(false);
     }

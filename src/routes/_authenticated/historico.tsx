@@ -12,7 +12,8 @@ export const Route = createFileRoute("/_authenticated/historico")({
       { title: "Histórico de decisões — Painel do Operador" },
       {
         name: "description",
-        content: "Registro de todas as solicitações já aprovadas ou reprovadas, com operador e motivo.",
+        content:
+          "Registro de todas as solicitações já aprovadas ou reprovadas, com operador e motivo.",
       },
       { property: "og:title", content: "Histórico de decisões — Painel do Operador" },
       {
@@ -40,7 +41,9 @@ function HistoricoPage() {
 
   return (
     <main className="mx-auto max-w-[1400px] px-4 py-6">
-      <h1 className="text-xl font-semibold tracking-tight text-foreground">Histórico de decisões</h1>
+      <h1 className="text-xl font-semibold tracking-tight text-foreground">
+        Histórico de decisões
+      </h1>
       <p className="mt-1 text-sm text-muted-foreground">
         Tudo que já foi validado, com operador responsável e motivo.
       </p>

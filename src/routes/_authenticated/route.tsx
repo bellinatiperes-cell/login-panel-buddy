@@ -1,27 +1,29 @@
 import { createFileRoute, Outlet, redirect, Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { getSession, logout } from "@/lib/auth.functions";
 import { ShieldCheck, LogOut } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async () => {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) throw redirect({ to: "/operador" });
-    return { user: data.user };
+    const session = await getSession();
+    if (!session.authenticated) throw redirect({ to: "/operador" });
+    return { usuario: session.usuario };
   },
   component: OperadorShell,
 });
 
 function OperadorShell() {
-  const { user } = Route.useRouteContext();
+  const { usuario } = Route.useRouteContext();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const sairFn = useServerFn(logout);
 
   async function sair() {
     await queryClient.cancelQueries();
     queryClient.clear();
-    await supabase.auth.signOut();
+    await sairFn();
     navigate({ to: "/operador", replace: true });
   }
 
@@ -49,7 +51,7 @@ function OperadorShell() {
           </nav>
           <div className="ml-auto flex items-center gap-3">
             <span className="hidden font-mono text-xs text-muted-foreground sm:inline">
-              {user.email}
+              {usuario}
             </span>
             <button
               onClick={sair}
