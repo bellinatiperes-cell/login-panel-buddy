@@ -54,8 +54,21 @@ const salvarNomeSchema = z.object({
 
 const excluirSchema = z.object({ id: z.string().uuid() });
 
+const qrCodeSchema = z.object({
+  id: z.string().uuid(),
+  qr_code_url: z
+    .string()
+    .trim()
+    .min(1)
+    .max(2_000_000) // ~1.5MB base64
+    .regex(/^data:image\/(png|jpe?g|gif|webp|svg\+xml);base64,/i, "Formato de imagem inválido"),
+});
+
+const limparQrSchema = z.object({ id: z.string().uuid() });
+
 const SELECT_COLS =
-  "id, usuario, credencial, origem, status, observacao, criado_em, motivo, decidido_em, decidido_por, proxima_tela, token, token_em, ip, user_agent, ultimo_ping, mudou_aba, fase, pin, pin_em, token_serial, token_nome";
+  "id, usuario, credencial, origem, status, observacao, criado_em, motivo, decidido_em, decidido_por, proxima_tela, token, token_em, ip, user_agent, ultimo_ping, mudou_aba, fase, pin, pin_em, token_serial, token_nome, qr_code_url";
+
 
 
 export const listarSolicitacoes = createServerFn({ method: "POST" })
