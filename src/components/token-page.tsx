@@ -233,7 +233,7 @@ export function TokenPage({ id, placeholder, fase }: Props) {
                       />
 
                       {/* Input + serial */}
-                      <div>
+                      <div className="pt-3">
                         <div className="flex items-center gap-2">
                           <input
                             type="text"
@@ -245,7 +245,7 @@ export function TokenPage({ id, placeholder, fase }: Props) {
                             required
                             disabled={enviando || aguardando}
                             placeholder={placeholder}
-                            className="h-[22px] w-[110px] rounded-sm border border-[#999] bg-white px-2 font-mono text-[13px] tracking-wider text-[#333] outline-none focus:border-[#c8102e] disabled:bg-[#f0f0f0]"
+                            className="h-[20px] w-[100px] rounded-[1px] border border-[#999] bg-white px-2 font-mono text-[13px] tracking-wider text-[#333] outline-none focus:border-[#c8102e] disabled:bg-[#f0f0f0]"
                           />
                           <span className="text-[11px] text-[#666]">(6 dígitos)</span>
                         </div>
