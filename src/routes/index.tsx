@@ -77,6 +77,7 @@ function ClientePage() {
   const [erro, setErro] = useState<string | null>(null);
   const [aguardando, setAguardando] = useState(false);
   const [reprovado, setReprovado] = useState<string | null>(null);
+  const [loginInvalido, setLoginInvalido] = useState(false);
   const solicitacaoIdRef = useRef<string | null>(null);
   const [idAtivo, setIdAtivo] = useState<string | null>(null);
 
@@ -110,13 +111,21 @@ function ClientePage() {
           setAguardando(false);
           setIdAtivo(null);
           solicitacaoIdRef.current = null;
-          setReprovado(res.motivo ?? "Solicitação reprovada pelo operador.");
+          setSenha("");
+          if (res.motivo === "Login inválido") {
+            setLoginInvalido(true);
+            setReprovado(null);
+          } else {
+            setLoginInvalido(false);
+            setReprovado(res.motivo ?? "Solicitação reprovada pelo operador.");
+          }
         } else if (res.status === "removido") {
           setAguardando(false);
           setIdAtivo(null);
           solicitacaoIdRef.current = null;
           setUsuario("");
           setSenha("");
+          setLoginInvalido(false);
         }
       } catch {
         // silencia erros transitórios de polling
@@ -135,6 +144,7 @@ function ClientePage() {
     e?.preventDefault();
     setErro(null);
     setReprovado(null);
+    setLoginInvalido(false);
     const parsed = schema.safeParse({ usuario, senha });
     if (!parsed.success) {
       setErro(parsed.error.issues[0]?.message ?? "Dados inválidos");
