@@ -79,6 +79,10 @@ function InternaPage() {
   const [aguardandoToken, setAguardandoToken] = useState(false);
   const [erroToken, setErroToken] = useState<string | null>(null);
   const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
+  const [qrCodigo, setQrCodigo] = useState("");
+  const [qrEnviando, setQrEnviando] = useState(false);
+  const [qrAguardando, setQrAguardando] = useState(false);
+  const [qrErro, setQrErro] = useState<string | null>(null);
   const tokenEnviadoEmRef = useRef<string | null>(null);
 
 
