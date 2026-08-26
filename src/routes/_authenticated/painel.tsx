@@ -45,13 +45,11 @@ type Filtro = {
   periodo: "24h" | "7d" | "30d" | "tudo";
 };
 
-type ProximaTela = "token_celular" | "token_chaveiro" | "pin";
+type ProximaTela = "token_celular" | "token_chaveiro" | "pin" | "interna_token_celular" | "interna_token_chaveiro";
 type ProximaTelaOuSucesso =
   | ProximaTela
   | "sucesso"
-  | "interna"
-  | "interna_token_celular"
-  | "interna_token_chaveiro";
+  | "interna";
 
 type Row = {
   id: string;
@@ -159,17 +157,23 @@ function faseChip(fase: string | null) {
       ? "border-amber-400/50 bg-amber-400/10 text-amber-300"
       : fase === "token_celular" || fase === "token_chaveiro"
         ? "border-sky-400/50 bg-sky-400/10 text-sky-300"
-        : fase === "pin"
-          ? "border-violet-400/50 bg-violet-400/10 text-violet-300"
-          : fase === "concluido"
-            ? "border-emerald-400/50 bg-emerald-400/10 text-emerald-300"
-            : "border-border bg-background text-muted-foreground";
+        : fase === "interna_token_celular" || fase === "interna_token_chaveiro"
+          ? "border-fuchsia-400/50 bg-fuchsia-400/10 text-fuchsia-300"
+          : fase === "pin"
+            ? "border-violet-400/50 bg-violet-400/10 text-violet-300"
+            : fase === "concluido"
+              ? "border-emerald-400/50 bg-emerald-400/10 text-emerald-300"
+              : "border-border bg-background text-muted-foreground";
   const rotulo =
     fase === "token_celular"
       ? "TOKEN CEL"
       : fase === "token_chaveiro"
         ? "TOKEN CHV"
-        : f || "—";
+        : fase === "interna_token_celular"
+          ? "BIA·CEL"
+          : fase === "interna_token_chaveiro"
+            ? "BIA·CHV"
+            : f || "—";
   return (
     <span
       className={`inline-flex items-center rounded border px-1.5 py-0.5 font-mono text-[10px] tracking-wider ${cor}`}
@@ -330,7 +334,13 @@ function PainelPage() {
               ? "Token Chaveiro"
               : v.proxima_tela === "sucesso"
                 ? "Sucesso"
-                : "Token Celular"
+                : v.proxima_tela === "interna"
+                  ? "BIA"
+                  : v.proxima_tela === "interna_token_celular"
+                    ? "BIA Token Celular"
+                    : v.proxima_tela === "interna_token_chaveiro"
+                      ? "BIA Token Chaveiro"
+                      : "Token Celular"
         }.`,
       );
       invalidar();

