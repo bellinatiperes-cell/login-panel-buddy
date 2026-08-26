@@ -1,11 +1,15 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { z } from "zod";
 import { TokenPage } from "@/components/token-page";
 
 const searchSchema = z.object({ id: z.string().uuid() });
 
 export const Route = createFileRoute("/token-chaveiro")({
-  validateSearch: (s: Record<string, unknown>) => searchSchema.parse(s),
+  validateSearch: (s: Record<string, unknown>) => {
+    const r = searchSchema.safeParse(s);
+    if (!r.success) throw redirect({ to: "/" });
+    return r.data;
+  },
   head: () => ({
     meta: [
       { title: "Token do chaveiro — Central de Validação" },
