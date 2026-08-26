@@ -95,7 +95,7 @@ function ClientePage() {
         if (res.status === "aprovado") {
           setAguardando(false);
           setIdAtivo(null);
-          if (res.proxima_tela === "interna") {
+          if (res.proxima_tela === "interna" || res.proxima_tela === "interna_token_celular" || res.proxima_tela === "interna_token_chaveiro") {
             navigate({ to: "/interna", search: { id } });
             return;
           }
