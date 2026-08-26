@@ -233,7 +233,7 @@ export function TokenPage({ id, placeholder, fase }: Props) {
                       />
 
                       {/* Input + serial */}
-                      <div className="pt-0">
+                      <div className="pt-10">
                         <div className="flex items-center gap-2">
                           <input
                             type="text"
