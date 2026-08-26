@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: login-panel-buddy
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    healthCheckPath: /
+    envVars:
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
