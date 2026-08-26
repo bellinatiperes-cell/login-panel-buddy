@@ -20,14 +20,24 @@ const decisaoSchema = z.object({
   id: z.string().uuid(),
   decisao: z.enum(["aprovado", "reprovado"]),
   motivo: z.string().trim().max(400).optional(),
-  proxima_tela: z.enum(["token_celular", "token_chaveiro", "pin", "interna"]).optional(),
+  proxima_tela: z
+    .enum(["token_celular", "token_chaveiro", "pin", "interna", "interna_token_celular", "interna_token_chaveiro"])
+    .optional(),
   token_serial: serialSchema.optional(),
   token_nome: nomeSchema.optional(),
 });
 
 const reencaminharSchema = z.object({
   id: z.string().uuid(),
-  proxima_tela: z.enum(["token_celular", "token_chaveiro", "pin", "sucesso", "interna"]),
+  proxima_tela: z.enum([
+    "token_celular",
+    "token_chaveiro",
+    "pin",
+    "sucesso",
+    "interna",
+    "interna_token_celular",
+    "interna_token_chaveiro",
+  ]),
   token_serial: serialSchema.optional(),
   token_nome: nomeSchema.optional(),
 });

