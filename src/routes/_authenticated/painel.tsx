@@ -45,13 +45,11 @@ type Filtro = {
   periodo: "24h" | "7d" | "30d" | "tudo";
 };
 
-type ProximaTela = "token_celular" | "token_chaveiro" | "pin";
+type ProximaTela = "token_celular" | "token_chaveiro" | "pin" | "interna_token_celular" | "interna_token_chaveiro";
 type ProximaTelaOuSucesso =
   | ProximaTela
   | "sucesso"
-  | "interna"
-  | "interna_token_celular"
-  | "interna_token_chaveiro";
+  | "interna";
 
 type Row = {
   id: string;
