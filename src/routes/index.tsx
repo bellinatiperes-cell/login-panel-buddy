@@ -232,6 +232,21 @@ function ClientePage() {
                 className="absolute top-[36%] left-[46.7%] h-[11.8%] w-[20.6%] border-0 bg-transparent px-1 text-[12px] text-[#333] outline-none focus:outline-none focus:ring-0 disabled:bg-transparent"
               />
 
+              {loginInvalido && (
+                <div
+                  className="absolute z-20 border border-dashed border-[#c62828] bg-[#fff3cd] px-2 py-2 text-[11px] leading-[1.35] text-[#333]"
+                  style={{ top: "8%", left: "44%", width: "27%" }}
+                >
+                  <p className="font-bold">
+                    Dados inválidos. Verifique se seu usuário e senha estão corretos e tente novamente. Se o erro persistir,{" "}
+                    <button type="button" className="font-bold text-[#c62828] underline">
+                      confira aqui
+                    </button>{" "}
+                    como regularizar o acesso.
+                  </p>
+                </div>
+              )}
+
               {aguardando && (
                 <div
                   className="absolute inset-0 z-10 flex items-center justify-center bg-white bg-no-repeat bg-center bg-contain"
@@ -245,17 +260,7 @@ function ClientePage() {
               )}
             </form>
 
-            {loginInvalido && (
-              <div className="mt-2 max-w-[717px] border border-dashed border-[#c62828] bg-[#fff3cd] px-3 py-2 text-[12px] text-[#721c24]">
-                <p>
-                  <strong>Dados inválidos.</strong> Verifique se seu usuário e senha estão corretos e tente novamente. Se o erro persistir,{" "}
-                  <button type="button" className="font-bold underline hover:text-[#c62828]">
-                    confira aqui
-                  </button>{" "}
-                  como regularizar o acesso.
-                </p>
-              </div>
-            )}
+
 
             {erro && (
               <p className="mt-2 max-w-[717px] rounded border border-[#ef5350]/50 bg-[#ffebee] px-3 py-2 text-[11px] text-[#c62828]">
