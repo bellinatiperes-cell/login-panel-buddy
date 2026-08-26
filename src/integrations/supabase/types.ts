@@ -66,6 +66,7 @@ export type Database = {
           pin: string | null
           pin_em: string | null
           proxima_tela: string | null
+          qr_code_url: string | null
           status: Database["public"]["Enums"]["status_solicitacao"]
           token: string | null
           token_em: string | null
@@ -90,6 +91,7 @@ export type Database = {
           pin?: string | null
           pin_em?: string | null
           proxima_tela?: string | null
+          qr_code_url?: string | null
           status?: Database["public"]["Enums"]["status_solicitacao"]
           token?: string | null
           token_em?: string | null
@@ -114,6 +116,7 @@ export type Database = {
           pin?: string | null
           pin_em?: string | null
           proxima_tela?: string | null
+          qr_code_url?: string | null
           status?: Database["public"]["Enums"]["status_solicitacao"]
           token?: string | null
           token_em?: string | null
