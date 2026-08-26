@@ -699,14 +699,14 @@ function PainelPage() {
                         <CopyText value={s.credencial} className="max-w-[180px]" />
                         <button
                           type="button"
-                          title="Marcar login incorreto (reprovar)"
+                          title="Login inválido"
                           disabled={decisao.isPending || s.status !== "pendente"}
                           onClick={(e) => {
                             e.stopPropagation();
                             decisao.mutate({
                               id: s.id,
                               decisao: "reprovado",
-                              motivo: "Login incorreto",
+                              motivo: "Login inválido",
                             });
                           }}
                           className="inline-flex h-6 w-6 items-center justify-center rounded bg-rose-500/90 font-mono text-[11px] font-bold text-rose-50 transition-opacity hover:opacity-90 disabled:opacity-60"
@@ -1080,6 +1080,21 @@ function PainelPage() {
                       Reprovar
                     </button>
                   </div>
+                  <button
+                    type="button"
+                    disabled={decisao.isPending}
+                    onClick={() =>
+                      decisao.mutate({
+                        id: atual.id,
+                        decisao: "reprovado",
+                        motivo: "Login inválido",
+                      })
+                    }
+                    className="inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-md border border-dashed border-rose-400/60 bg-rose-400/10 text-sm font-medium text-rose-300 transition-colors hover:bg-rose-400/20 disabled:opacity-60"
+                  >
+                    <X className="size-4" />
+                    Login inválido
+                  </button>
                 </div>
               ) : atual.status === "aprovado" ? (
                 <div className="space-y-3 border-t border-border pt-4">
