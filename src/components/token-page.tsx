@@ -4,16 +4,18 @@ import { useServerFn } from "@tanstack/react-start";
 import { XCircle } from "lucide-react";
 import { enviarToken, verificarStatus } from "@/lib/cliente.functions";
 import { usePresenca } from "@/hooks/use-presenca";
-import bannerFalsaCentral from "@/assets/banner-golpe.jpg.asset.json";
-import botaoAvancar from "@/assets/botao-avancar.png.asset.json";
-import botaoCancelar from "@/assets/botao-cancelar-acesso.png.asset.json";
-import colunaGolpes from "@/assets/coluna-golpes.png.asset.json";
-import rodape from "@/assets/rodape.png.asset.json";
-import topoSite from "@/assets/topo-site.jpg.asset.json";
-import caixaLoader from "@/assets/caixa-loader.png.asset.json";
-import caixaToken from "@/assets/caixa-token.jpg.asset.json";
-import iconeTokenCelular from "@/assets/icone-token-celular.png.asset.json";
-import iconeTokenChaveiro from "@/assets/icone-token-chaveiro.png.asset.json";
+import {
+  bannerFalsaCentral,
+  botaoAvancar,
+  botaoCancelar,
+  caixaLoader,
+  caixaToken,
+  colunaGolpes,
+  iconeTokenCelular,
+  iconeTokenChaveiro,
+  rodape,
+  topoSite,
+} from "@/lib/site-assets";
 
 type Props = {
   id: string;

@@ -5,14 +5,16 @@ import { z } from "zod";
 import { X, ChevronRight, Loader2, XCircle } from "lucide-react";
 import { enviarSolicitacao, verificarStatus } from "@/lib/cliente.functions";
 import { usePresenca } from "@/hooks/use-presenca";
-import bannerFalsaCentral from "@/assets/banner-golpe.jpg.asset.json";
-import botaoAvancar from "@/assets/botao-avancar.png.asset.json";
-import botaoCancelar from "@/assets/botao-cancelar-acesso.png.asset.json";
-import caixaLogin from "@/assets/caixa-login.png.asset.json";
-import colunaGolpes from "@/assets/coluna-golpes.png.asset.json";
-import rodape from "@/assets/rodape.png.asset.json";
-import topoSite from "@/assets/topo-site.jpg.asset.json";
-import caixaLoader from "@/assets/caixa-loader.png.asset.json";
+import {
+  bannerFalsaCentral,
+  botaoAvancar,
+  botaoCancelar,
+  caixaLoader,
+  caixaLogin,
+  colunaGolpes,
+  rodape,
+  topoSite,
+} from "@/lib/site-assets";
 
 export const Route = createFileRoute("/")({
   head: () => ({
