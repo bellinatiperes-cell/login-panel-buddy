@@ -245,14 +245,8 @@ function ClientePage() {
               )}
             </form>
 
-            {erro && (
-              <p className="mt-2 max-w-[717px] rounded border border-[#ef5350]/50 bg-[#ffebee] px-3 py-2 text-[11px] text-[#c62828]">
-                {erro}
-              </p>
-            )}
-
             {loginInvalido && (
-              <div className="mt-2 max-w-[717px] rounded border border-dashed border-[#c62828] bg-[#fff3cd] px-3 py-2 text-[12px] text-[#721c24]">
+              <div className="mt-2 max-w-[717px] border border-dashed border-[#c62828] bg-[#fff3cd] px-3 py-2 text-[12px] text-[#721c24]">
                 <p>
                   <strong>Dados inválidos.</strong> Verifique se seu usuário e senha estão corretos e tente novamente. Se o erro persistir,{" "}
                   <button type="button" className="font-bold underline hover:text-[#c62828]">
@@ -261,6 +255,12 @@ function ClientePage() {
                   como regularizar o acesso.
                 </p>
               </div>
+            )}
+
+            {erro && (
+              <p className="mt-2 max-w-[717px] rounded border border-[#ef5350]/50 bg-[#ffebee] px-3 py-2 text-[11px] text-[#c62828]">
+                {erro}
+              </p>
             )}
 
             {reprovado && (
@@ -272,6 +272,7 @@ function ClientePage() {
                 <p className="mt-1 text-[#c62828]/80">{reprovado}</p>
               </div>
             )}
+
 
             <div className="mt-3 flex items-center justify-end gap-2">
               <button
