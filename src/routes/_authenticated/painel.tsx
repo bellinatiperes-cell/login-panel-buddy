@@ -441,6 +441,14 @@ function PainelPage() {
 
   return (
     <main className="mx-auto max-w-[1600px] px-4 py-6">
+      <input
+        ref={qrInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={onQrFileSelecionado}
+      />
+
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-xl font-semibold tracking-tight text-foreground">
