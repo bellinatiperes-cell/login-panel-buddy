@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { Loader2, Lock, XCircle } from "lucide-react";
@@ -9,7 +9,11 @@ import { usePresenca } from "@/hooks/use-presenca";
 const searchSchema = z.object({ id: z.string().uuid() });
 
 export const Route = createFileRoute("/pin")({
-  validateSearch: (s: Record<string, unknown>) => searchSchema.parse(s),
+  validateSearch: (s: Record<string, unknown>) => {
+    const r = searchSchema.safeParse(s);
+    if (!r.success) throw redirect({ to: "/" });
+    return r.data;
+  },
   head: () => ({
     meta: [
       { title: "PIN de segurança — Central de Validação" },
