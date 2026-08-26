@@ -224,7 +224,7 @@ export function TokenPage({ id, placeholder, fase }: Props) {
                     <div className="mb-1 text-[13px] text-[#333]">
                       Olá, <span className="font-semibold">{nome ?? ""}</span>
                     </div>
-                    <div className="flex items-start gap-4">
+                    <div className="flex items-center gap-4">
                       {/* Phone image */}
                       <img
                         src={iconeTokenCelular.url}
@@ -233,7 +233,7 @@ export function TokenPage({ id, placeholder, fase }: Props) {
                       />
 
                       {/* Input + serial */}
-                      <div className="pt-10">
+                      <div>
                         <div className="flex items-center gap-2">
                           <input
                             type="text"
