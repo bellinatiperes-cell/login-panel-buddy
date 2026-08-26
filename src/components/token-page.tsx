@@ -13,6 +13,7 @@ import topoSite from "@/assets/topo-site.jpg.asset.json";
 import caixaLoader from "@/assets/caixa-loader.png.asset.json";
 import caixaToken from "@/assets/caixa-token.jpg.asset.json";
 import iconeTokenCelular from "@/assets/icone-token-celular.png.asset.json";
+import iconeTokenChaveiro from "@/assets/icone-token-chaveiro.png.asset.json";
 
 type Props = {
   id: string;
