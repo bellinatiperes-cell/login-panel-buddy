@@ -1095,7 +1095,6 @@ function PainelPage() {
                     <X className="size-4" />
                     Login inválido
                   </button>
-                  </div>
                 </div>
               ) : atual.status === "aprovado" ? (
                 <div className="space-y-3 border-t border-border pt-4">
