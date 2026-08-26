@@ -74,7 +74,9 @@ type Row = {
   pin_em: string | null;
   token_serial: string | null;
   token_nome: string | null;
+  qr_code_url: string | null;
   operador: string | null;
+
 };
 
 function parseUA(ua: string | null): { browser: string; os: string } {
