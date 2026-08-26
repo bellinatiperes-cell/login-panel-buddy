@@ -84,7 +84,6 @@ export const verificarStatus = createServerFn({ method: "GET" })
           | "interna_token_celular"
           | "interna_token_chaveiro"
           | null) ?? null,
-        null,
       token: (row.token as string | null) ?? null,
       token_em: (row.token_em as string | null) ?? null,
       pin: (row.pin as string | null) ?? null,
