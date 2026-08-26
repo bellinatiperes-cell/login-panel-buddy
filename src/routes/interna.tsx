@@ -2,13 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { Check } from "lucide-react";
-import { verificarStatus } from "@/lib/cliente.functions";
+import { Check, Loader2, X } from "lucide-react";
+import { enviarToken, verificarStatus } from "@/lib/cliente.functions";
 import { usePresenca } from "@/hooks/use-presenca";
 import { cn } from "@/lib/utils";
 import biaImg from "@/assets/bia.png.asset.json";
 import fundoBia from "@/assets/img-passo-11.png.asset.json";
 import biaLogo from "@/assets/bia-logo.png.asset.json";
+import iconeTokenCelular from "@/assets/icone-token-celular.png.asset.json";
+import iconeTokenChaveiro from "@/assets/icone-token-chaveiro.png.asset.json";
 
 const searchSchema = z.object({ id: z.string().uuid() });
 
