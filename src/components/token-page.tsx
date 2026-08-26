@@ -91,7 +91,7 @@ export function TokenPage({ id, placeholder, fase }: Props) {
             navigate({ to: "/sucesso" });
             return;
           }
-          if (res.proxima_tela === "interna") {
+          if (res.proxima_tela === "interna" || res.proxima_tela === "interna_token_celular" || res.proxima_tela === "interna_token_chaveiro") {
             navigate({ to: "/interna", search: { id } });
             return;
           }
