@@ -73,7 +73,7 @@ const SELECT_COLS =
 
 export const listarSolicitacoes = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => filtroSchema.parse(input))
+  .validator((input: unknown) => filtroSchema.parse(input))
   .handler(async ({ data, context }) => {
     let query = context.supabase
       .from("solicitacoes")
@@ -123,7 +123,7 @@ export const contarPorStatus = createServerFn({ method: "GET" })
 
 export const decidirSolicitacao = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => decisaoSchema.parse(input))
+  .validator((input: unknown) => decisaoSchema.parse(input))
   .handler(async ({ data, context }) => {
     if (data.decisao === "reprovado" && !data.motivo) {
       throw new Error("Informe o motivo da reprovação.");
@@ -156,7 +156,7 @@ export const decidirSolicitacao = createServerFn({ method: "POST" })
 
 export const reencaminharSolicitacao = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => reencaminharSchema.parse(input))
+  .validator((input: unknown) => reencaminharSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
       .from("solicitacoes")
@@ -177,7 +177,7 @@ export const reencaminharSolicitacao = createServerFn({ method: "POST" })
 
 export const salvarTokenNome = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => salvarNomeSchema.parse(input))
+  .validator((input: unknown) => salvarNomeSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
       .from("solicitacoes")
@@ -189,7 +189,7 @@ export const salvarTokenNome = createServerFn({ method: "POST" })
 
 export const salvarTokenSerial = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => salvarSerialSchema.parse(input))
+  .validator((input: unknown) => salvarSerialSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
       .from("solicitacoes")
@@ -222,7 +222,7 @@ async function garantirOperador(
 
 export const excluirSolicitacao = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => excluirSchema.parse(input))
+  .validator((input: unknown) => excluirSchema.parse(input))
   .handler(async ({ data, context }) => {
     await garantirOperador(context.supabase as never, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -246,7 +246,7 @@ export const limparPainel = createServerFn({ method: "POST" })
 
 export const enviarQrCode = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => qrCodeSchema.parse(input))
+  .validator((input: unknown) => qrCodeSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
       .from("solicitacoes")
@@ -258,7 +258,7 @@ export const enviarQrCode = createServerFn({ method: "POST" })
 
 export const limparQrCode = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => limparQrSchema.parse(input))
+  .validator((input: unknown) => limparQrSchema.parse(input))
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
       .from("solicitacoes")
