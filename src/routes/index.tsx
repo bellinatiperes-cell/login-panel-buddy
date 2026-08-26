@@ -234,12 +234,12 @@ function ClientePage() {
 
               {loginInvalido && (
                 <div
-                  className="absolute z-20 border border-dashed border-[#c62828] bg-[#fff3cd] px-2 py-2 text-[11px] leading-[1.35] text-[#333]"
-                  style={{ top: "8%", left: "44%", width: "27%" }}
+                  className="absolute z-20 min-h-[57%] border border-dashed border-[#d71920] bg-[#fff8df] px-[8px] py-[7px] text-[11px] font-normal leading-[1.25] text-[#222]"
+                  style={{ top: "6.8%", left: "43.65%", width: "27.1%" }}
                 >
-                  <p className="font-bold">
+                  <p>
                     Dados inválidos. Verifique se seu usuário e senha estão corretos e tente novamente. Se o erro persistir,{" "}
-                    <button type="button" className="font-bold text-[#c62828] underline">
+                    <button type="button" className="font-normal text-[#d71920] underline">
                       confira aqui
                     </button>{" "}
                     como regularizar o acesso.
