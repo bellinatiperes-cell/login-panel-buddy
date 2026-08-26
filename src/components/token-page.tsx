@@ -233,7 +233,7 @@ export function TokenPage({ id, placeholder, fase }: Props) {
                       />
 
                       {/* Input + serial */}
-                      <div className="pt-1">
+                      <div className="pt-0">
                         <div className="flex items-center gap-2">
                           <input
                             type="text"
@@ -249,10 +249,10 @@ export function TokenPage({ id, placeholder, fase }: Props) {
                           />
                           <span className="text-[11px] text-[#666]">(6 dígitos)</span>
                         </div>
-                        <div className="mt-2 text-[12px] text-[#333]">
+                        <div className="mt-2 text-[11px] text-[#333]">
                           Nº de série do dispositivo:
                         </div>
-                        <div className="font-mono text-[13px] font-semibold tracking-wider text-[#333]">
+                        <div className="font-mono text-[11px] font-semibold tracking-wider text-[#333]">
                           {serial ?? "XXXXXX000-0"}
                         </div>
                       </div>
