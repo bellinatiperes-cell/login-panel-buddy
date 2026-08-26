@@ -78,7 +78,9 @@ function InternaPage() {
   const [enviandoToken, setEnviandoToken] = useState(false);
   const [aguardandoToken, setAguardandoToken] = useState(false);
   const [erroToken, setErroToken] = useState<string | null>(null);
+  const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
   const tokenEnviadoEmRef = useRef<string | null>(null);
+
 
   usePresenca(id, "concluido");
 
