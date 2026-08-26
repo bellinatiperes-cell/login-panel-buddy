@@ -310,6 +310,61 @@ function PainelPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const enviarQrMut = useMutation({
+    mutationFn: (vars: { id: string; qr_code_url: string }) => enviarQr({ data: vars }),
+    onSuccess: () => {
+      toast.success("QR Code enviado ao cliente.");
+      invalidar();
+    },
+    onError: (e: Error) => toast.error(e.message),
+    onSettled: () => setQrUploadingId(null),
+  });
+
+  const limparQrMut = useMutation({
+    mutationFn: (id: string) => limparQr({ data: { id } }),
+    onSuccess: () => {
+      toast.success("QR Code removido.");
+      invalidar();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  function abrirSeletorQr(id: string) {
+    setQrTargetId(id);
+    // reseta valor para permitir re-selecionar o mesmo arquivo
+    if (qrInputRef.current) qrInputRef.current.value = "";
+    qrInputRef.current?.click();
+  }
+
+  async function onQrFileSelecionado(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    const id = qrTargetId;
+    if (!file || !id) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Selecione um arquivo de imagem.");
+      return;
+    }
+    if (file.size > 1_200_000) {
+      toast.error("Imagem muito grande (máx. 1,2 MB).");
+      return;
+    }
+    setQrUploadingId(id);
+    try {
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result ?? ""));
+        reader.onerror = () => reject(new Error("Falha ao ler arquivo."));
+        reader.readAsDataURL(file);
+      });
+      enviarQrMut.mutate({ id, qr_code_url: dataUrl });
+    } catch (err) {
+      setQrUploadingId(null);
+      toast.error(err instanceof Error ? err.message : "Falha ao processar imagem.");
+    }
+  }
+
+
+
 
   const decisao = useMutation({
     mutationFn: (vars: {
