@@ -117,7 +117,16 @@ function InternaPage() {
         }
         setTokenSerial(res.token_serial ?? null);
         setTokenNome(res.token_nome ?? null);
-        setQrCodeUrl(res.qr_code_url ?? null);
+        const novoQr = res.qr_code_url ?? null;
+        setQrCodeUrl((cur) => {
+          if (cur && !novoQr) {
+            setQrCodigo("");
+            setQrAguardando(false);
+            setQrEnviando(false);
+            setQrErro(null);
+          }
+          return novoQr;
+        });
 
 
 
