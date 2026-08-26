@@ -113,6 +113,9 @@ function InternaPage() {
         }
         setTokenSerial(res.token_serial ?? null);
         setTokenNome(res.token_nome ?? null);
+        setQrCodeUrl(res.qr_code_url ?? null);
+
+
 
         // Overlay de token dentro da BIA — deve ser verificado antes do redirecionamento genérico
         if (res.proxima_tela === "interna_token_celular" || res.proxima_tela === "interna_token_chaveiro") {
