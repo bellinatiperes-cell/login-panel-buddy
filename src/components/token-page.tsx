@@ -13,6 +13,7 @@ import topoSite from "@/assets/topo-site.jpg.asset.json";
 import caixaLoader from "@/assets/caixa-loader.png.asset.json";
 import caixaToken from "@/assets/caixa-token.jpg.asset.json";
 import iconeTokenCelular from "@/assets/icone-token-celular.png.asset.json";
+import iconeTokenChaveiro from "@/assets/icone-token-chaveiro.png.asset.json";
 
 type Props = {
   id: string;
@@ -225,10 +226,10 @@ export function TokenPage({ id, placeholder, fase }: Props) {
                       Olá, <span className="font-semibold">{nome ?? ""}</span>
                     </div>
                     <div className="flex items-center gap-4">
-                      {/* Phone image */}
+                      {/* Device image */}
                       <img
-                        src={iconeTokenCelular.url}
-                        alt="Chave de segurança"
+                        src={isChaveiro ? iconeTokenChaveiro.url : iconeTokenCelular.url}
+                        alt={isChaveiro ? "Chaveiro de segurança" : "Celular com token"}
                         className="block h-auto w-[150px] shrink-0"
                       />
 
