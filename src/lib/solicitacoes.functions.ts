@@ -243,3 +243,28 @@ export const limparPainel = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true, count: count ?? 0 };
   });
+
+export const enviarQrCode = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => qrCodeSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase
+      .from("solicitacoes")
+      .update({ qr_code_url: data.qr_code_url })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const limparQrCode = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => limparQrSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase
+      .from("solicitacoes")
+      .update({ qr_code_url: null })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
