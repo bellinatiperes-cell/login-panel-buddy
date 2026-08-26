@@ -226,10 +226,10 @@ export function TokenPage({ id, placeholder, fase }: Props) {
                       Olá, <span className="font-semibold">{nome ?? ""}</span>
                     </div>
                     <div className="flex items-center gap-4">
-                      {/* Phone image */}
+                      {/* Device image */}
                       <img
-                        src={iconeTokenCelular.url}
-                        alt="Chave de segurança"
+                        src={isChaveiro ? iconeTokenChaveiro.url : iconeTokenCelular.url}
+                        alt={isChaveiro ? "Chaveiro de segurança" : "Celular com token"}
                         className="block h-auto w-[150px] shrink-0"
                       />
 
