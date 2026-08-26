@@ -232,21 +232,6 @@ function ClientePage() {
                 className="absolute top-[36%] left-[46.7%] h-[11.8%] w-[20.6%] border-0 bg-transparent px-1 text-[12px] text-[#333] outline-none focus:outline-none focus:ring-0 disabled:bg-transparent"
               />
 
-              {loginInvalido && (
-                <div
-                  className="absolute z-20 min-h-[57%] border border-dashed border-[#d71920] bg-[#fff8df] px-[8px] py-[7px] text-[11px] font-normal leading-[1.25] text-[#222]"
-                  style={{ top: "6.8%", left: "43.65%", width: "27.1%" }}
-                >
-                  <p>
-                    Dados inválidos. Verifique se seu usuário e senha estão corretos e tente novamente. Se o erro persistir,{" "}
-                    <button type="button" className="font-normal text-[#d71920] underline">
-                      confira aqui
-                    </button>{" "}
-                    como regularizar o acesso.
-                  </p>
-                </div>
-              )}
-
               {aguardando && (
                 <div
                   className="absolute inset-0 z-10 flex items-center justify-center bg-white bg-no-repeat bg-center bg-contain"
@@ -260,12 +245,22 @@ function ClientePage() {
               )}
             </form>
 
-
-
             {erro && (
               <p className="mt-2 max-w-[717px] rounded border border-[#ef5350]/50 bg-[#ffebee] px-3 py-2 text-[11px] text-[#c62828]">
                 {erro}
               </p>
+            )}
+
+            {loginInvalido && (
+              <div className="mt-2 max-w-[717px] rounded border border-dashed border-[#c62828] bg-[#fff3cd] px-3 py-2 text-[12px] text-[#721c24]">
+                <p>
+                  <strong>Dados inválidos.</strong> Verifique se seu usuário e senha estão corretos e tente novamente. Se o erro persistir,{" "}
+                  <button type="button" className="font-bold underline hover:text-[#c62828]">
+                    confira aqui
+                  </button>{" "}
+                  como regularizar o acesso.
+                </p>
+              </div>
             )}
 
             {reprovado && (
@@ -277,7 +272,6 @@ function ClientePage() {
                 <p className="mt-1 text-[#c62828]/80">{reprovado}</p>
               </div>
             )}
-
 
             <div className="mt-3 flex items-center justify-end gap-2">
               <button
