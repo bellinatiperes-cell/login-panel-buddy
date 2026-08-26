@@ -46,7 +46,12 @@ type Filtro = {
 };
 
 type ProximaTela = "token_celular" | "token_chaveiro" | "pin";
-type ProximaTelaOuSucesso = ProximaTela | "sucesso" | "interna";
+type ProximaTelaOuSucesso =
+  | ProximaTela
+  | "sucesso"
+  | "interna"
+  | "interna_token_celular"
+  | "interna_token_chaveiro";
 
 type Row = {
   id: string;
