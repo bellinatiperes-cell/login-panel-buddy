@@ -4,7 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Check, X, Loader2, Search, Copy, Trash2, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { Check, X, Loader2, Search, Copy, Trash2, ArrowRight, Eye, EyeOff, QrCode, Upload } from "lucide-react";
 import {
   listarSolicitacoes,
   decidirSolicitacao,
@@ -14,7 +14,10 @@ import {
   limparPainel,
   salvarTokenSerial,
   salvarTokenNome,
+  enviarQrCode,
+  limparQrCode,
 } from "@/lib/solicitacoes.functions";
+
 import {
   StatusBadge,
   formatarData,
