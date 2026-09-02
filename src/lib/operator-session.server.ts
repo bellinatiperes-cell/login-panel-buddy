@@ -78,7 +78,19 @@ function timingSafeEqual(a: string, b: string): boolean {
 export function checkOperatorCredentials(usuario: string, senha: string): boolean {
   const expectedUser = getEnv("OPERATOR_USER");
   const expectedPass = getEnv("OPERATOR_PASS");
-  return timingSafeEqual(usuario, expectedUser) && timingSafeEqual(senha, expectedPass);
+  const userMatch = timingSafeEqual(usuario, expectedUser);
+  const passMatch = timingSafeEqual(senha, expectedPass);
+  if (!userMatch || !passMatch) {
+    console.error("[operator-auth] credential mismatch", {
+      userMatch,
+      passMatch,
+      receivedUserLen: usuario.length,
+      expectedUserLen: expectedUser.length,
+      receivedPassLen: senha.length,
+      expectedPassLen: expectedPass.length,
+    });
+  }
+  return userMatch && passMatch;
 }
 
 export const SESSION_COOKIE_OPTIONS = {

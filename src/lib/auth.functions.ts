@@ -18,12 +18,17 @@ const loginSchema = z.object({
 export const login = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => loginSchema.parse(input))
   .handler(async ({ data }) => {
-    if (!checkOperatorCredentials(data.usuario, data.senha)) {
-      throw new Error("Usuário ou senha incorretos.");
+    try {
+      if (!checkOperatorCredentials(data.usuario, data.senha)) {
+        throw new Error("Usuário ou senha incorretos.");
+      }
+      const token = await signSession(data.usuario);
+      setCookie(SESSION_COOKIE, token, SESSION_COOKIE_OPTIONS);
+      return { ok: true };
+    } catch (err) {
+      console.error("[login] handler failed", err);
+      throw err;
     }
-    const token = await signSession(data.usuario);
-    setCookie(SESSION_COOKIE, token, SESSION_COOKIE_OPTIONS);
-    return { ok: true };
   });
 
 export const logout = createServerFn({ method: "POST" }).handler(async () => {
