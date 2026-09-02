@@ -393,8 +393,8 @@ function InternaPage() {
             <div className="mb-4 text-center">
               <h3 className="text-base font-bold text-slate-800">Validação por QR Code</h3>
               <p className="mt-2 text-[12px] leading-relaxed text-slate-600">
-                Abra o aplicativo <strong>Bradesco</strong> no seu celular, acesse
-                <strong> Mais &gt; Ler QR Code</strong> e aponte a câmera para o código abaixo. Após
+                Abra o aplicativo <strong>NetEmpresa</strong> no seu celular, acesse
+                <strong> Chave de Segurança &gt; Validação Digital</strong> e aponte a câmera para o código abaixo. Após
                 a leitura, o app exibirá um <strong>código de 8 dígitos</strong> — digite-o abaixo
                 para concluir a validação da BIA.
               </p>
