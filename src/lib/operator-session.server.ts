@@ -4,7 +4,8 @@ export const SESSION_COOKIE = "operator_session";
 const SESSION_TTL_SECONDS = 12 * 3600; // 12h
 
 function getEnv(name: string): string {
-  const value = process.env[name];
+  // trim() guards against trailing newline/space pasted into env var dashboards.
+  const value = process.env[name]?.trim();
   if (!value) throw new Error(`Missing environment variable: ${name}`);
   return value;
 }
