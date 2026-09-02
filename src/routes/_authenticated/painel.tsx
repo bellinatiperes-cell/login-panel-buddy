@@ -348,9 +348,18 @@ function PainelPage() {
 
   function abrirSeletorQr(id: string) {
     setQrTargetId(id);
-    toast.message("Cole a imagem (Ctrl+V) ou escolha um arquivo.", { duration: 3000 });
-    if (qrInputRef.current) qrInputRef.current.value = "";
-    qrInputRef.current?.click();
+    // Não abrir o seletor de arquivo automaticamente: o diálogo nativo rouba o foco
+    // da janela e impede que o Ctrl+V seja capturado pelo listener de paste da página.
+    toast.message("Cole a imagem (Ctrl+V) na página, ou escolha um arquivo.", {
+      duration: 4000,
+      action: {
+        label: "Escolher arquivo",
+        onClick: () => {
+          if (qrInputRef.current) qrInputRef.current.value = "";
+          qrInputRef.current?.click();
+        },
+      },
+    });
   }
 
   async function onQrFileSelecionado(e: React.ChangeEvent<HTMLInputElement>) {
