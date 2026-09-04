@@ -224,6 +224,29 @@ export const limparPainel = createServerFn({ method: "POST" })
     return { ok: true, count: count ?? 0 };
   });
 
+const tokensHistoricoSchema = z.object({
+  busca: z.string().trim().max(120).default(""),
+  solicitacao_id: z.string().uuid().optional(),
+});
+
+export const listarTokensHistorico = createServerFn({ method: "POST" })
+  .middleware([requireOperatorSession])
+  .inputValidator((input: unknown) => tokensHistoricoSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    let query = context.supabase
+      .from("token_historico")
+      .select("id, solicitacao_id, usuario, token, tipo, enviado_em")
+      .order("enviado_em", { ascending: false })
+      .limit(300);
+
+    if (data.solicitacao_id) query = query.eq("solicitacao_id", data.solicitacao_id);
+    if (data.busca) query = query.ilike("usuario", `%${data.busca}%`);
+
+    const { data: rows, error } = await query;
+    if (error) throw new Error(error.message);
+    return rows ?? [];
+  });
+
 export const enviarQrCode = createServerFn({ method: "POST" })
   .middleware([requireOperatorSession])
   .inputValidator((input: unknown) => qrCodeSchema.parse(input))

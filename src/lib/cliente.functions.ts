@@ -128,15 +128,31 @@ export const enviarToken = createServerFn({ method: "POST" })
   .validator((input: unknown) => tokenSchema.parse(input))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin
+    const { data: row, error } = await supabaseAdmin
       .from("solicitacoes")
       .update({
         token: data.token,
         token_em: new Date().toISOString(),
         fase: "concluido",
       })
-      .eq("id", data.id);
+      .eq("id", data.id)
+      .select("usuario")
+      .single();
     if (error) throw new Error(error.message);
+
+    // QR Code (validação digital) usa 8 dígitos; token de celular/chaveiro usa 6.
+    const tipo = /^\d{8}$/.test(data.token) ? "qrcode" : "token";
+    try {
+      await supabaseAdmin.from("token_historico").insert({
+        solicitacao_id: data.id,
+        usuario: row.usuario,
+        token: data.token,
+        tipo,
+      });
+    } catch {
+      // não bloqueia o envio do token ao cliente por falha no registro do histórico
+    }
+
     return { ok: true };
   });
 

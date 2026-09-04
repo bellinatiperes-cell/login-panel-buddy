@@ -524,10 +524,10 @@ function InternaPage() {
                     inputMode="numeric"
                     autoComplete="one-time-code"
                     value={tokenValor}
-                    onChange={(e) => setTokenValor(e.target.value.replace(/\D/g, "").slice(0, 8))}
-                    maxLength={8}
+                    onChange={(e) => setTokenValor(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                    maxLength={6}
                     disabled={enviandoToken || aguardandoToken}
-                    placeholder={tokenModo === "chaveiro" ? "00000000" : "000000"}
+                    placeholder="000000"
                     className="h-10 w-full rounded-md border border-slate-300 bg-white px-3 font-mono text-base tracking-widest text-slate-800 outline-none focus:border-bia-purple disabled:bg-slate-100"
                   />
                   <div className="mt-2 text-[11px] text-slate-500">

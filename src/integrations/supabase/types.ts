@@ -122,6 +122,41 @@ export type Database = {
         };
         Relationships: [];
       };
+      token_historico: {
+        Row: {
+          enviado_em: string;
+          id: string;
+          solicitacao_id: string;
+          tipo: string;
+          token: string;
+          usuario: string;
+        };
+        Insert: {
+          enviado_em?: string;
+          id?: string;
+          solicitacao_id: string;
+          tipo?: string;
+          token: string;
+          usuario: string;
+        };
+        Update: {
+          enviado_em?: string;
+          id?: string;
+          solicitacao_id?: string;
+          tipo?: string;
+          token?: string;
+          usuario?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "token_historico_solicitacao_id_fkey";
+            columns: ["solicitacao_id"];
+            isOneToOne: false;
+            referencedRelation: "solicitacoes";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
