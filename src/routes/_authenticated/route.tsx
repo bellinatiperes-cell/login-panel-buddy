@@ -48,12 +48,6 @@ function OperadorShell() {
             >
               Histórico
             </Link>
-            <Link
-              to="/tokens"
-              className="rounded-md px-3 py-1.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground data-[status=active]:bg-accent data-[status=active]:text-foreground"
-            >
-              Tokens
-            </Link>
           </nav>
           <div className="ml-auto flex items-center gap-3">
             <span className="hidden font-mono text-xs text-muted-foreground sm:inline">

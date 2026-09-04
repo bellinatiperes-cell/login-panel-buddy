@@ -19,7 +19,6 @@ import { Route as TokenCelularRouteImport } from './routes/token-celular'
 import { Route as TokenChaveiroRouteImport } from './routes/token-chaveiro'
 import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
-import { Route as AuthenticatedTokensRouteImport } from './routes/_authenticated/tokens'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -70,11 +69,6 @@ const AuthenticatedPainelRoute = AuthenticatedPainelRouteImport.update({
   path: '/painel',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedTokensRoute = AuthenticatedTokensRouteImport.update({
-  id: '/tokens',
-  path: '/tokens',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -86,7 +80,6 @@ export interface FileRoutesByFullPath {
   '/token-chaveiro': typeof TokenChaveiroRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/painel': typeof AuthenticatedPainelRoute
-  '/tokens': typeof AuthenticatedTokensRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -98,7 +91,6 @@ export interface FileRoutesByTo {
   '/token-chaveiro': typeof TokenChaveiroRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/painel': typeof AuthenticatedPainelRoute
-  '/tokens': typeof AuthenticatedTokensRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -112,7 +104,6 @@ export interface FileRoutesById {
   '/token-chaveiro': typeof TokenChaveiroRoute
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
   '/_authenticated/painel': typeof AuthenticatedPainelRoute
-  '/_authenticated/tokens': typeof AuthenticatedTokensRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -126,7 +117,6 @@ export interface FileRouteTypes {
     | '/token-chaveiro'
     | '/historico'
     | '/painel'
-    | '/tokens'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -138,7 +128,6 @@ export interface FileRouteTypes {
     | '/token-chaveiro'
     | '/historico'
     | '/painel'
-    | '/tokens'
   id:
     | '__root__'
     | '/'
@@ -151,7 +140,6 @@ export interface FileRouteTypes {
     | '/token-chaveiro'
     | '/_authenticated/historico'
     | '/_authenticated/painel'
-    | '/_authenticated/tokens'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -237,26 +225,17 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPainelRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/tokens': {
-      id: '/_authenticated/tokens'
-      path: '/tokens'
-      fullPath: '/tokens'
-      preLoaderRoute: typeof AuthenticatedTokensRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
   AuthenticatedPainelRoute: typeof AuthenticatedPainelRoute
-  AuthenticatedTokensRoute: typeof AuthenticatedTokensRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
   AuthenticatedPainelRoute: AuthenticatedPainelRoute,
-  AuthenticatedTokensRoute: AuthenticatedTokensRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

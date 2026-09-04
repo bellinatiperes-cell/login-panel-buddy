@@ -1,4 +1,22 @@
+import { QrCode, KeyRound } from "lucide-react";
+
 export type StatusSolicitacao = "pendente" | "aprovado" | "reprovado";
+
+export function TokenTipoBadge({ tipo }: { tipo: string }) {
+  const isQr = tipo === "qrcode";
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 font-mono text-[10px] tracking-wider uppercase ${
+        isQr
+          ? "border-cyan-400/50 bg-cyan-400/10 text-cyan-300"
+          : "border-sky-400/50 bg-sky-400/10 text-sky-300"
+      }`}
+    >
+      {isQr ? <QrCode className="size-3" /> : <KeyRound className="size-3" />}
+      {isQr ? "QR (8 díg.)" : "Token (6 díg.)"}
+    </span>
+  );
+}
 
 export function StatusBadge({ status }: { status: StatusSolicitacao }) {
   const estilos: Record<StatusSolicitacao, string> = {

