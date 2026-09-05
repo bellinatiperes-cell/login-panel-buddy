@@ -318,11 +318,11 @@ function ClientePage() {
           </div>
 
           {/* Right column */}
-          <aside className="overflow-visible bg-[#e5e5e5] px-2">
+          <aside className="bg-[#e5e5e5] px-2">
             <img
               src={colunaGolpes.url}
               alt="Se proteja contra golpes e fraudes"
-              className="block h-auto w-full origin-top-left scale-[1.05]"
+              className="block h-auto w-full"
             />
           </aside>
         </div>
